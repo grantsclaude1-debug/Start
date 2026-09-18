@@ -11,6 +11,9 @@ const required = [
   /PRIVATE_GATE_VERIFIER/,
   /PRIVATE_GATE_SESSION_SECRET/,
   /in-memory/i,
+  /per-instance/i,
+  /ephemeral/i,
+  /unsuitable for real sales, capacity, tickets, or check-in/i,
   /no real PII/i,
   /payment.+disabled/is,
   /Yellow Dog.+read-only/is,
@@ -25,5 +28,5 @@ for (const match of readme.matchAll(/\[[^\]]+\]\(([^)]+)\)/g)) {
   if (!target || /^(?:https?:|mailto:)/.test(target)) continue;
   if (!existsSync(resolve(dirname(readmePath), target))) throw new Error(`Broken local README link: ${target}`);
 }
-for (const script of ['start', 'test', 'check', 'docs:check', 'verify', 'gate:setup']) if (!pkg.scripts?.[script]) throw new Error(`Missing package script: ${script}`);
+for (const script of ['start', 'test', 'check', 'docs:check', 'vercel:check', 'verify', 'gate:setup']) if (!pkg.scripts?.[script]) throw new Error(`Missing package script: ${script}`);
 console.log('PASS docs: required safety claims, exact setup variables, scripts, and local links are present');

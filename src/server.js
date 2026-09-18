@@ -62,10 +62,15 @@ async function readJson(req) {
   catch { throw new DomainError('INVALID_JSON'); }
 }
 
-function sameOrigin(req) {
+function sameOrigin(req, { trustProxy = false } = {}) {
   const origin = req.headers.origin;
   if (!origin) return !req.headers['sec-fetch-site'] || ['same-origin', 'none'].includes(req.headers['sec-fetch-site']);
-  try { return new URL(origin).origin === `${req.socket.encrypted ? 'https' : 'http'}://${req.headers.host}`; }
+  let protocol = req.socket.encrypted ? 'https' : 'http';
+  if (trustProxy) {
+    const forwarded = String(req.headers['x-forwarded-proto'] ?? '').split(',')[0].trim().toLowerCase();
+    if (forwarded === 'http' || forwarded === 'https') protocol = forwarded;
+  }
+  try { return new URL(origin).origin === `${protocol}://${req.headers.host}`; }
   catch { return false; }
 }
 
@@ -91,13 +96,11 @@ function authContext(req, gate, secret) {
   if (!session.authenticated) throw new DomainError('AUTH_REQUIRED');
   return { token, csrf: csrfFor(token, secret) };
 }
-function requireMutation(req, context) {
-  if (!sameOrigin(req) || req.headers['x-demo-csrf'] !== context.csrf) throw new DomainError('REQUEST_REJECTED');
-}
 function snapshot(state, csrf) {
   return {
     synthetic: true,
     warning: 'NON-PRODUCTION / SYNTHETIC DATA ONLY',
+    persistenceWarning: 'Per-instance, ephemeral serverless preview state. Unsuitable for real sales, capacity, tickets, or check-in.',
     csrf,
     products: PRODUCTS,
     session: { id: 'session-demo', label: '10:00 AM Synthetic Session', startsAt: '2030-06-01T14:00:00.000Z' },
@@ -124,10 +127,10 @@ function reportRows(state, id) {
   throw new DomainError('NOT_FOUND');
 }
 
-export function createDemoServer({ env = process.env, now = () => Date.now(), secureCookie = env.DEMO_COOKIE_SECURE === '1' } = {}) {
+export function createDemoRequestHandler({ env = process.env, now = () => Date.now(), secureCookie = env.DEMO_COOKIE_SECURE === '1', trustProxy = false } = {}) {
   const config = loadConfig(env); const gateConfig = requireConfiguredGate(config);
   const gate = new TemporaryPasscodeGate(gateConfig); const state = createState({ now });
-  const server = createServer(async (req, res) => {
+  const handler = async (req, res) => {
     try {
       const url = new URL(req.url, 'http://local.invalid');
       if (url.pathname.includes('..') || decodeURIComponent(url.pathname).includes('..')) throw new DomainError('NOT_FOUND');
@@ -136,15 +139,15 @@ export function createDemoServer({ env = process.env, now = () => Date.now(), se
         return send(res, 200, bytes, { 'content-type': type });
       }
       if (url.pathname === '/api/auth/login' && req.method === 'POST') {
-        if (!sameOrigin(req)) throw new DomainError('AUTH_FAILED');
+        if (!sameOrigin(req, { trustProxy })) throw new DomainError('AUTH_FAILED');
         const body = await readJson(req);
         const session = await gate.authenticate({ passcode: body.passcode, sourceBucket: req.socket.remoteAddress ?? 'unknown', requestId: randomUUID() });
         const cookie = `${COOKIE}=${encodeURIComponent(session.token)}; HttpOnly; SameSite=Strict; Path=/; Max-Age=28800${secureCookie ? '; Secure' : ''}`;
         return send(res, 200, { authenticated: true, csrf: csrfFor(session.token, gateConfig.sessionSecret) }, { 'set-cookie': cookie });
       }
-      if (url.pathname === '/api/health' && req.method === 'GET') return send(res, 200, { status: 'local-demo', production: false, synthetic: true });
+      if (url.pathname === '/api/health' && req.method === 'GET') return send(res, 200, { status: 'synthetic-preview', production: false, synthetic: true, persistence: 'per-instance-ephemeral' });
       const context = authContext(req, gate, gateConfig.sessionSecret);
-      if (UNSAFE.has(req.method)) requireMutation(req, context);
+      if (UNSAFE.has(req.method) && (!sameOrigin(req, { trustProxy }) || req.headers['x-demo-csrf'] !== context.csrf)) throw new DomainError('REQUEST_REJECTED');
       if (url.pathname === '/api/state' && req.method === 'GET') return send(res, 200, snapshot(state, context.csrf));
       if (url.pathname === '/api/auth/logout' && req.method === 'POST') {
         gate.revoke(context.token);
@@ -192,7 +195,14 @@ export function createDemoServer({ env = process.env, now = () => Date.now(), se
       const status = error.code === 'AUTH_REQUIRED' ? 401 : error.code === 'NOT_FOUND' ? 404 : error.code === 'UNSUPPORTED_MEDIA_TYPE' ? 415 : error.code === 'BODY_TOO_LARGE' ? 413 : ['CAPACITY_UNAVAILABLE', 'VERSION_CONFLICT'].includes(error.code) ? 409 : 400;
       send(res, status, { error: status === 401 ? 'Authentication required' : 'Request failed' });
     }
-  });
-  server.demoState = state;
+  };
+  handler.demoState = state;
+  return handler;
+}
+
+export function createDemoServer(options = {}) {
+  const handler = createDemoRequestHandler(options);
+  const server = createServer(handler);
+  server.demoState = handler.demoState;
   return server;
 }

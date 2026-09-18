@@ -9,7 +9,7 @@
   <script src="/app.js" defer></script>
 </head>
 <body>
-  <div class="warning" role="alert"><strong>NON-PRODUCTION · SYNTHETIC DATA ONLY</strong><span>No real payments, scanning, customer data, or provider actions.</span></div>
+  <div class="warning" role="alert"><strong>NON-PRODUCTION · SYNTHETIC DATA ONLY</strong><span>SERVERLESS PREVIEW STATE IS PER-INSTANCE AND EPHEMERAL — unsuitable for real sales, capacity, tickets, or check-in. No real payments, scanning, customer data, or provider actions.</span></div>
   <header>
     <div><p class="eyebrow">PRIVATE LOCAL DEMONSTRATION</p><h1>Venue operations console</h1></div>
     <button id="logout" class="quiet" hidden>Sign out</button>
@@ -26,7 +26,7 @@
       <nav aria-label="Dashboard sections">
         <a href="#capacity">Capacity</a><a href="#sales">Sample sale</a><a href="#tickets">Admissions</a><a href="#reports">Reports</a><a href="#operations">Operations</a>
       </nav>
-      <section class="hero" aria-labelledby="overview-title"><div><p class="eyebrow">ONE VENUE · ONE SYNTHETIC SESSION</p><h2 id="overview-title">Today’s local demo</h2><p>Every mutation is held only in this Node.js process and disappears on restart.</p></div><span class="badge">No live actions</span></section>
+      <section class="hero" aria-labelledby="overview-title"><div><p class="eyebrow">ONE VENUE · ONE SYNTHETIC SESSION</p><h2 id="overview-title">Synthetic operator preview</h2><p>Every mutation is held only in one Node.js instance and disappears on restart, replacement, or scale-out. Instances do not share state.</p></div><span class="badge">No live actions</span></section>
 
       <section id="capacity" aria-labelledby="capacity-title"><div class="section-head"><div><p class="eyebrow">CAPACITY CONTROL</p><h2 id="capacity-title">Session availability</h2></div><button id="refresh" class="quiet">Refresh</button></div><div id="metrics" class="metrics"></div><div class="panel"><h3>Atomic holds</h3><p>Holds are checked and reserved by the server as one synchronous operation. Overselling is rejected.</p><div id="holds" class="table-wrap"></div></div></section>
 
@@ -39,6 +39,6 @@
       <section id="operations" aria-labelledby="operations-title"><p class="eyebrow">INERT OPERATIONS</p><h2 id="operations-title">Offline and integration posture</h2><div id="operations-list" class="cards"></div></section>
     </div>
   </main>
-  <footer><strong>NON-PRODUCTION / SYNTHETIC</strong> · In-memory only · No PII · No credentials · No provider writes</footer>
+  <footer><strong>NON-PRODUCTION / SYNTHETIC</strong> · Per-instance ephemeral memory only · Unsuitable for real sales, capacity, tickets, or check-in · No PII · No credentials · No provider writes</footer>
 </body>
 </html>

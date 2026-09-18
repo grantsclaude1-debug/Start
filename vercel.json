@@ -1,0 +1,16 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "version": 2,
+  "functions": {
+    "api/handler.js": {
+      "runtime": "nodejs24.x",
+      "includeFiles": "public/**"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/:path*",
+      "destination": "/api/handler"
+    }
+  ]
+}

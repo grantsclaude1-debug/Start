@@ -9,7 +9,8 @@
     "test": "node --test",
     "check": "node scripts/check.mjs",
     "docs:check": "node scripts/validate-docs.mjs",
-    "verify": "npm run check && npm run docs:check && npm test",
+    "vercel:check": "node scripts/validate-vercel-config.mjs",
+    "verify": "npm run check && npm run docs:check && npm run vercel:check && npm test",
     "gate:setup": "node scripts/generate-passcode-verifier.mjs"
   }
 }

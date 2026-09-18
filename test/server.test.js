@@ -50,7 +50,7 @@ test('static allowlist serves accessible UI with security headers and leaks no f
   assert.equal(script.status, 200);
   assert.match(script.headers['content-type'], /text\/javascript/);
   const health = await request('/api/health');
-  assert.deepEqual(health.data, { status: 'local-demo', production: false, synthetic: true });
+  assert.deepEqual(health.data, { status: 'synthetic-preview', production: false, synthetic: true, persistence: 'per-instance-ephemeral' });
   const blocked = await request('/package.json');
   assert.equal(blocked.status, 401);
   assert.deepEqual(blocked.data, { error: 'Authentication required' });
