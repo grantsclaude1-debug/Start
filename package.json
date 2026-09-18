@@ -1,0 +1,15 @@
+{
+  "name": "dig-n-zone-venue-core-scaffold",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=24" },
+  "scripts": {
+    "start": "node src/start.js",
+    "test": "node --test",
+    "check": "node scripts/check.mjs",
+    "docs:check": "node scripts/validate-docs.mjs",
+    "verify": "npm run check && npm run docs:check && npm test",
+    "gate:setup": "node scripts/generate-passcode-verifier.mjs"
+  }
+}

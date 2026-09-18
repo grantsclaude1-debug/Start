@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Synthetic Venue Console — Non-Production</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <div class="warning" role="alert"><strong>NON-PRODUCTION · SYNTHETIC DATA ONLY</strong><span>No real payments, scanning, customer data, or provider actions.</span></div>
+  <header>
+    <div><p class="eyebrow">PRIVATE LOCAL DEMONSTRATION</p><h1>Venue operations console</h1></div>
+    <button id="logout" class="quiet" hidden>Sign out</button>
+  </header>
+  <main>
+    <section id="login" class="login-card" aria-labelledby="login-title">
+      <p class="tag">Restricted preview</p><h2 id="login-title">Enter the private demo passcode</h2>
+      <p>The passcode is verified server-side and is never stored in this page.</p>
+      <form id="login-form"><label for="passcode">Passcode</label><input id="passcode" name="passcode" type="password" autocomplete="current-password" minlength="16" required><button>Open synthetic console</button></form>
+      <p id="login-status" class="status" role="status" aria-live="polite"></p>
+    </section>
+
+    <div id="console" hidden>
+      <nav aria-label="Dashboard sections">
+        <a href="#capacity">Capacity</a><a href="#sales">Sample sale</a><a href="#tickets">Admissions</a><a href="#reports">Reports</a><a href="#operations">Operations</a>
+      </nav>
+      <section class="hero" aria-labelledby="overview-title"><div><p class="eyebrow">ONE VENUE · ONE SYNTHETIC SESSION</p><h2 id="overview-title">Today’s local demo</h2><p>Every mutation is held only in this Node.js process and disappears on restart.</p></div><span class="badge">No live actions</span></section>
+
+      <section id="capacity" aria-labelledby="capacity-title"><div class="section-head"><div><p class="eyebrow">CAPACITY CONTROL</p><h2 id="capacity-title">Session availability</h2></div><button id="refresh" class="quiet">Refresh</button></div><div id="metrics" class="metrics"></div><div class="panel"><h3>Atomic holds</h3><p>Holds are checked and reserved by the server as one synchronous operation. Overselling is rejected.</p><div id="holds" class="table-wrap"></div></div></section>
+
+      <section id="sales" aria-labelledby="sales-title"><p class="eyebrow">SAMPLE FLOW</p><h2 id="sales-title">Create a synthetic sale</h2><div class="two-col"><form id="hold-form" class="panel"><h3>1. Reserve admission</h3><label for="product">Product</label><select id="product" name="product"></select><label for="quantity">Quantity</label><input id="quantity" name="quantity" type="number" min="1" max="10" value="1" required><button>Create 10-minute hold</button></form><div class="panel"><h3>2. Confirm sample order</h3><p>Payment collection is intentionally disabled. Confirming only creates a local synthetic order and ticket.</p><button id="confirm-order" disabled>Confirm without payment</button><p class="fine">Payment provider: <strong>disabled placeholder</strong></p></div></div><p id="action-status" class="status" role="status" aria-live="polite"></p></section>
+
+      <section id="tickets" aria-labelledby="tickets-title"><p class="eyebrow">ADMISSIONS</p><h2 id="tickets-title">Tickets and check-in</h2><p class="callout"><strong>Display-only code:</strong> the pattern below is intentionally not a QR code and is not compatible with scanners.</p><div id="ticket-list" class="cards"></div><div id="admissions" class="panel"></div></section>
+
+      <section id="reports" aria-labelledby="reports-title"><p class="eyebrow">PLAIN-LANGUAGE REPORTS</p><h2 id="reports-title">Understand and export the demo</h2><div id="report-list" class="cards"></div></section>
+
+      <section id="operations" aria-labelledby="operations-title"><p class="eyebrow">INERT OPERATIONS</p><h2 id="operations-title">Offline and integration posture</h2><div id="operations-list" class="cards"></div></section>
+    </div>
+  </main>
+  <footer><strong>NON-PRODUCTION / SYNTHETIC</strong> · In-memory only · No PII · No credentials · No provider writes</footer>
+</body>
+</html>
