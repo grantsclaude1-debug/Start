@@ -62,7 +62,15 @@ async function readJson(req) {
   catch { throw new DomainError('INVALID_JSON'); }
 }
 
-function sameOrigin(req, { trustProxy = false } = {}) {
+function publicOrigin(value) {
+  if (!value) return null;
+  try {
+    const url = new URL(value);
+    return ['http:', 'https:'].includes(url.protocol) ? url.origin : null;
+  } catch { return null; }
+}
+
+function sameOrigin(req, { trustProxy = false, externalOrigin = null } = {}) {
   const origin = req.headers.origin;
   if (!origin) return !req.headers['sec-fetch-site'] || ['same-origin', 'none'].includes(req.headers['sec-fetch-site']);
   let protocol = req.socket.encrypted ? 'https' : 'http';
@@ -70,7 +78,10 @@ function sameOrigin(req, { trustProxy = false } = {}) {
     const forwarded = String(req.headers['x-forwarded-proto'] ?? '').split(',')[0].trim().toLowerCase();
     if (forwarded === 'http' || forwarded === 'https') protocol = forwarded;
   }
-  try { return new URL(origin).origin === `${protocol}://${req.headers.host}`; }
+  try {
+    const requestOrigin = new URL(origin).origin;
+    return requestOrigin === `${protocol}://${req.headers.host}` || requestOrigin === externalOrigin;
+  }
   catch { return false; }
 }
 
@@ -129,6 +140,7 @@ function reportRows(state, id) {
 
 export function createDemoRequestHandler({ env = process.env, now = () => Date.now(), secureCookie = env.DEMO_COOKIE_SECURE === '1', trustProxy = false } = {}) {
   const config = loadConfig(env); const gateConfig = requireConfiguredGate(config);
+  const externalOrigin = publicOrigin(env.PUBLIC_URL);
   const gate = new TemporaryPasscodeGate(gateConfig); const state = createState({ now });
   const handler = async (req, res) => {
     try {
@@ -139,15 +151,19 @@ export function createDemoRequestHandler({ env = process.env, now = () => Date.n
         return send(res, 200, bytes, { 'content-type': type });
       }
       if (url.pathname === '/api/auth/login' && req.method === 'POST') {
-        if (!sameOrigin(req, { trustProxy })) throw new DomainError('AUTH_FAILED');
+        if (!sameOrigin(req, { trustProxy, externalOrigin })) throw new DomainError('AUTH_FAILED');
         const body = await readJson(req);
         const session = await gate.authenticate({ passcode: body.passcode, sourceBucket: req.socket.remoteAddress ?? 'unknown', requestId: randomUUID() });
         const cookie = `${COOKIE}=${encodeURIComponent(session.token)}; HttpOnly; SameSite=Strict; Path=/; Max-Age=28800${secureCookie ? '; Secure' : ''}`;
         return send(res, 200, { authenticated: true, csrf: csrfFor(session.token, gateConfig.sessionSecret) }, { 'set-cookie': cookie });
       }
+      if (url.pathname === '/api/auth/status' && req.method === 'GET') {
+        const token = cookies(req.headers.cookie)[COOKIE];
+        return send(res, 200, { authenticated: gate.inspect(token).authenticated });
+      }
       if (url.pathname === '/api/health' && req.method === 'GET') return send(res, 200, { status: 'synthetic-preview', production: false, synthetic: true, persistence: 'per-instance-ephemeral' });
       const context = authContext(req, gate, gateConfig.sessionSecret);
-      if (UNSAFE.has(req.method) && (!sameOrigin(req, { trustProxy }) || req.headers['x-demo-csrf'] !== context.csrf)) throw new DomainError('REQUEST_REJECTED');
+      if (UNSAFE.has(req.method) && (!sameOrigin(req, { trustProxy, externalOrigin }) || req.headers['x-demo-csrf'] !== context.csrf)) throw new DomainError('REQUEST_REJECTED');
       if (url.pathname === '/api/state' && req.method === 'GET') return send(res, 200, snapshot(state, context.csrf));
       if (url.pathname === '/api/auth/logout' && req.method === 'POST') {
         gate.revoke(context.token);

@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="color-scheme" content="light">
+  <link rel="icon" href="data:,">
   <title>Synthetic Venue Console — Non-Production</title>
   <link rel="stylesheet" href="/styles.css">
   <script src="/app.js" defer></script>
@@ -16,7 +17,7 @@
   </header>
   <main>
     <section id="login" class="login-card" aria-labelledby="login-title">
-      <p class="tag">Restricted preview</p><h2 id="login-title">Enter the private demo passcode</h2>
+      <p class="tag">Restricted preview</p><h2 id="login-title" tabindex="-1">Enter the private demo passcode</h2>
       <p>The passcode is verified server-side and is never stored in this page.</p>
       <form id="login-form"><label for="passcode">Passcode</label><input id="passcode" name="passcode" type="password" autocomplete="current-password" minlength="16" required><button>Open synthetic console</button></form>
       <p id="login-status" class="status" role="status" aria-live="polite"></p>
@@ -26,7 +27,7 @@
       <nav aria-label="Dashboard sections">
         <a href="#capacity">Capacity</a><a href="#sales">Sample sale</a><a href="#tickets">Admissions</a><a href="#reports">Reports</a><a href="#operations">Operations</a>
       </nav>
-      <section class="hero" aria-labelledby="overview-title"><div><p class="eyebrow">ONE VENUE · ONE SYNTHETIC SESSION</p><h2 id="overview-title">Synthetic operator preview</h2><p>Every mutation is held only in one Node.js instance and disappears on restart, replacement, or scale-out. Instances do not share state.</p></div><span class="badge">No live actions</span></section>
+      <section class="hero" aria-labelledby="overview-title"><div><p class="eyebrow">ONE VENUE · ONE SYNTHETIC SESSION</p><h2 id="overview-title" tabindex="-1">Synthetic operator preview</h2><p>Every mutation is held only in one Node.js instance and disappears on restart, replacement, or scale-out. Instances do not share state.</p></div><span class="badge">No live actions</span></section>
 
       <section id="capacity" aria-labelledby="capacity-title"><div class="section-head"><div><p class="eyebrow">CAPACITY CONTROL</p><h2 id="capacity-title">Session availability</h2></div><button id="refresh" class="quiet">Refresh</button></div><div id="metrics" class="metrics"></div><div class="panel"><h3>Atomic holds</h3><p>Holds are checked and reserved by the server as one synchronous operation. Overselling is rejected.</p><div id="holds" class="table-wrap"></div></div></section>
 

@@ -57,6 +57,8 @@ test('static allowlist serves accessible UI with security headers and leaks no f
 });
 
 test('auth is origin-protected, generic, cookie-backed, and exposes CSRF only after success', async () => {
+  const anonymousStatus = await request('/api/auth/status');
+  assert.deepEqual(anonymousStatus.data, { authenticated: false });
   const crossOrigin = await request('/api/auth/login', { method: 'POST', body: { passcode }, headers: { origin: 'http://attacker.invalid' } });
   assert.equal(crossOrigin.status, 400);
   assert.deepEqual(crossOrigin.data, { error: 'Request failed' });
@@ -72,9 +74,32 @@ test('auth is origin-protected, generic, cookie-backed, and exposes CSRF only af
   cookie = setCookie.split(';')[0]; csrf = login.data.csrf;
   const stateResponse = await request('/api/state', { headers: { cookie } });
   assert.equal(stateResponse.status, 200);
+  const authenticatedStatus = await request('/api/auth/status', { headers: { cookie } });
+  assert.deepEqual(authenticatedStatus.data, { authenticated: true });
   assert.equal(stateResponse.data.synthetic, true);
   assert.equal(JSON.stringify(stateResponse.data).includes(passcode), false);
   assert.equal(stateResponse.data.integrations.payment.collection, false);
+});
+
+test('an explicitly configured public portal origin passes the origin gate without weakening other origins', async () => {
+  const verifier = await encodeScryptVerifier(passcode);
+  const publicUrl = 'http://127.0.0.1:59999/';
+  const portalServer = createDemoServer({ env: { PRIVATE_GATE_VERIFIER: verifier, PRIVATE_GATE_SESSION_SECRET: randomBytes(32).toString('base64url'), PUBLIC_URL: publicUrl } });
+  await new Promise((resolve, reject) => { portalServer.once('error', reject); portalServer.listen(0, '127.0.0.1', resolve); });
+  const portalBase = `http://127.0.0.1:${portalServer.address().port}`;
+  const portalRequest = (origin) => new Promise((resolve, reject) => {
+    const payload = Buffer.from(JSON.stringify({ passcode }));
+    const req = httpRequest(new URL('/api/auth/login', portalBase), { method: 'POST', headers: { origin, 'content-type': 'application/json', 'content-length': payload.length } }, (res) => {
+      res.resume(); res.on('end', () => resolve(res.statusCode));
+    });
+    req.on('error', reject); req.end(payload);
+  });
+  try {
+    assert.equal(await portalRequest(new URL(publicUrl).origin), 200);
+    assert.equal(await portalRequest('http://attacker.invalid'), 400);
+  } finally {
+    await new Promise((resolve) => portalServer.close(resolve));
+  }
 });
 
 test('API enforces JSON type, body limit, same-origin CSRF, atomic holds, orders, and check-ins', async () => {
