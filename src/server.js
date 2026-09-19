@@ -208,6 +208,11 @@ export function createDemoRequestHandler({ env = process.env, now = () => Date.n
       throw new DomainError('NOT_FOUND');
     } catch (error) {
       if (res.headersSent || res.destroyed) return;
+      console.error('synthetic_demo_request_failed', {
+        code: error instanceof DomainError ? error.code : 'UNEXPECTED',
+        method: req.method,
+        path: String(req.url ?? '').split('?')[0],
+      });
       const status = error.code === 'AUTH_REQUIRED' ? 401 : error.code === 'NOT_FOUND' ? 404 : error.code === 'UNSUPPORTED_MEDIA_TYPE' ? 415 : error.code === 'BODY_TOO_LARGE' ? 413 : ['CAPACITY_UNAVAILABLE', 'VERSION_CONFLICT'].includes(error.code) ? 409 : 400;
       send(res, status, { error: status === 401 ? 'Authentication required' : 'Request failed' });
     }
