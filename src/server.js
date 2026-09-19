@@ -210,6 +210,8 @@ export function createDemoRequestHandler({ env = process.env, now = () => Date.n
       if (res.headersSent || res.destroyed) return;
       console.error('synthetic_demo_request_failed', {
         code: error instanceof DomainError ? error.code : 'UNEXPECTED',
+        name: error instanceof DomainError ? undefined : error?.name,
+        message: error instanceof DomainError ? undefined : error?.message,
         method: req.method,
         path: String(req.url ?? '').split('?')[0],
       });
