@@ -4,42 +4,131 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#123d35">
   <link rel="icon" href="data:,">
-  <title>Synthetic Venue Console — Non-Production</title>
+  <title>Dig n Zone Operator Preview — Non-Production</title>
   <link rel="stylesheet" href="/styles.css">
   <script src="/app.js" defer></script>
 </head>
 <body>
-  <div class="warning" role="alert"><strong>NON-PRODUCTION · SYNTHETIC DATA ONLY</strong><span>SERVERLESS PREVIEW STATE IS PER-INSTANCE AND EPHEMERAL — unsuitable for real sales, capacity, tickets, or check-in. No real payments, scanning, customer data, or provider actions.</span></div>
-  <header>
-    <div><p class="eyebrow">PRIVATE LOCAL DEMONSTRATION</p><h1>Venue operations console</h1></div>
-    <button id="logout" class="quiet" hidden>Sign out</button>
-  </header>
-  <main>
-    <section id="login" class="login-card" aria-labelledby="login-title">
-      <p class="tag">Restricted preview</p><h2 id="login-title" tabindex="-1">Enter the private demo passcode</h2>
-      <p>The passcode is verified server-side and is never stored in this page.</p>
-      <form id="login-form"><label for="passcode">Passcode</label><input id="passcode" name="passcode" type="password" autocomplete="current-password" minlength="16" required><button>Open synthetic console</button></form>
-      <p id="login-status" class="status" role="status" aria-live="polite"></p>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  <div class="warning" role="alert">
+    <strong>NON-PRODUCTION · SYNTHETIC DATA ONLY</strong>
+    <span>PER-INSTANCE EPHEMERAL PREVIEW. No real sales, check-in, payments, customer data, scanning, or provider actions.</span>
+  </div>
+
+  <main id="main-content">
+    <section id="login" class="login-shell" aria-labelledby="login-title">
+      <div class="login-brand" aria-hidden="true">
+        <div class="brand-mark">DZ</div>
+        <p class="eyebrow light">PRIVATE OPERATOR PREVIEW</p>
+        <h1>Run the day with clarity.</h1>
+        <p>A focused synthetic workspace for capacity, sample sales, admissions, reports, and operating readiness.</p>
+        <ul class="boundary-list">
+          <li>Ephemeral in-memory state</li>
+          <li>Payments and providers disabled</li>
+          <li>No real guest information</li>
+        </ul>
+      </div>
+      <div class="login-panel">
+        <span class="pill pill-warning">Restricted preview</span>
+        <h2 id="login-title" tabindex="-1">Sign in to the operator console</h2>
+        <p class="lede">Use the temporary private-build passcode. Verification happens on the server and the passcode is never stored in this page.</p>
+        <form id="login-form" novalidate>
+          <label for="passcode">Private demo passcode</label>
+          <div class="input-wrap"><input id="passcode" name="passcode" type="password" autocomplete="current-password" minlength="16" required aria-describedby="passcode-help login-status"></div>
+          <p id="passcode-help" class="field-help">At least 16 characters. Failed attempts are rate-limited and fail closed.</p>
+          <button id="login-submit" class="button button-primary" type="submit"><span>Open synthetic console</span></button>
+        </form>
+        <p id="login-status" class="status" role="status" aria-live="polite"></p>
+        <div class="boundary-note"><strong>Preview boundary</strong><span>State disappears whenever this instance restarts, is replaced, or scales.</span></div>
+      </div>
     </section>
 
-    <div id="console" hidden>
-      <nav aria-label="Dashboard sections">
-        <a href="#capacity">Capacity</a><a href="#sales">Sample sale</a><a href="#tickets">Admissions</a><a href="#reports">Reports</a><a href="#operations">Operations</a>
-      </nav>
-      <section class="hero" aria-labelledby="overview-title"><div><p class="eyebrow">ONE VENUE · ONE SYNTHETIC SESSION</p><h2 id="overview-title" tabindex="-1">Synthetic operator preview</h2><p>Every mutation is held only in one Node.js instance and disappears on restart, replacement, or scale-out. Instances do not share state.</p></div><span class="badge">No live actions</span></section>
+    <div id="console" class="app-shell" hidden>
+      <aside class="sidebar" aria-label="Operator navigation">
+        <div class="brand-lockup"><div class="brand-mark small">DZ</div><div><strong>Dig n Zone</strong><span>Operator preview</span></div></div>
+        <nav aria-label="Console sections">
+          <p class="nav-label">OPERATIONS</p>
+          <a href="#capacity" data-nav="capacity"><span aria-hidden="true">◫</span> Overview</a>
+          <a href="#sales" data-nav="sales"><span aria-hidden="true">＋</span> Sample sale</a>
+          <a href="#tickets" data-nav="tickets"><span aria-hidden="true">◇</span> Admissions</a>
+          <p class="nav-label">INSIGHTS & SYSTEMS</p>
+          <a href="#reports" data-nav="reports"><span aria-hidden="true">▥</span> Reports</a>
+          <a href="#operations" data-nav="operations"><span aria-hidden="true">◎</span> Readiness</a>
+        </nav>
+        <div class="sidebar-boundary"><span class="status-dot"></span><div><strong>Synthetic mode</strong><small>No live actions</small></div></div>
+      </aside>
 
-      <section id="capacity" aria-labelledby="capacity-title"><div class="section-head"><div><p class="eyebrow">CAPACITY CONTROL</p><h2 id="capacity-title">Session availability</h2></div><button id="refresh" class="quiet">Refresh</button></div><div id="metrics" class="metrics"></div><div class="panel"><h3>Atomic holds</h3><p>Holds are checked and reserved by the server as one synchronous operation. Overselling is rejected.</p><div id="holds" class="table-wrap"></div></div></section>
+      <div class="workspace">
+        <header class="topbar">
+          <div><p class="eyebrow">VENUE OPERATIONS</p><h1 id="page-title">Today’s overview</h1></div>
+          <div class="topbar-actions">
+            <span class="pill pill-neutral">One venue</span>
+            <button id="logout" class="button button-secondary" type="button">Sign out</button>
+          </div>
+        </header>
 
-      <section id="sales" aria-labelledby="sales-title"><p class="eyebrow">SAMPLE FLOW</p><h2 id="sales-title">Create a synthetic sale</h2><div class="two-col"><form id="hold-form" class="panel"><h3>1. Reserve admission</h3><label for="product">Product</label><select id="product" name="product"></select><label for="quantity">Quantity</label><input id="quantity" name="quantity" type="number" min="1" max="10" value="1" required><button>Create 10-minute hold</button></form><div class="panel"><h3>2. Confirm sample order</h3><p>Payment collection is intentionally disabled. Confirming only creates a local synthetic order and ticket.</p><button id="confirm-order" disabled>Confirm without payment</button><p class="fine">Payment provider: <strong>disabled placeholder</strong></p></div></div><p id="action-status" class="status" role="status" aria-live="polite"></p></section>
+        <div class="mobile-nav-wrap"><label for="mobile-nav">Current workspace</label><select id="mobile-nav"><option value="capacity">Overview</option><option value="sales">Sample sale</option><option value="tickets">Admissions</option><option value="reports">Reports</option><option value="operations">Readiness</option></select></div>
 
-      <section id="tickets" aria-labelledby="tickets-title"><p class="eyebrow">ADMISSIONS</p><h2 id="tickets-title">Tickets and check-in</h2><p class="callout"><strong>Display-only code:</strong> the pattern below is intentionally not a QR code and is not compatible with scanners.</p><div id="ticket-list" class="cards"></div><div id="admissions" class="panel"></div></section>
+        <div class="ephemeral-strip" role="note"><strong>Ephemeral session</strong><span>All activity is synthetic, instance-local, and cleared by a restart.</span></div>
+        <div id="loading-state" class="loading-panel" role="status" aria-live="polite" hidden><span class="spinner" aria-hidden="true"></span>Loading synthetic venue state…</div>
 
-      <section id="reports" aria-labelledby="reports-title"><p class="eyebrow">PLAIN-LANGUAGE REPORTS</p><h2 id="reports-title">Understand and export the demo</h2><div id="report-list" class="cards"></div></section>
+        <section id="capacity" class="view" data-title="Today’s overview" aria-labelledby="capacity-title">
+          <div class="hero">
+            <div><p class="eyebrow light">SATURDAY · SYNTHETIC SESSION</p><h2 id="capacity-title" tabindex="-1">A clear view of today’s floor</h2><p>Track availability and active holds before starting the next sample transaction.</p></div>
+            <div class="hero-meta"><span>No live actions</span><strong>10:00 AM</strong><small>Synthetic session</small></div>
+          </div>
+          <div class="section-heading"><div><p class="eyebrow">LIVE SNAPSHOT</p><h3>Session availability</h3><p>Capacity is server-authoritative and updates after every synthetic action.</p></div><button id="refresh" class="button button-secondary" type="button">Refresh snapshot</button></div>
+          <div id="metrics" class="metrics" aria-live="polite"></div>
+          <article class="panel">
+            <div class="panel-heading"><div><h3>Reservation holds</h3><p>Server-validated reservations with ten-minute expiry.</p></div><span class="pill pill-safe">Oversell protection on</span></div>
+            <div id="holds" class="table-wrap"></div>
+          </article>
+        </section>
 
-      <section id="operations" aria-labelledby="operations-title"><p class="eyebrow">INERT OPERATIONS</p><h2 id="operations-title">Offline and integration posture</h2><div id="operations-list" class="cards"></div></section>
+        <section id="sales" class="view" data-title="Create a sample sale" aria-labelledby="sales-title" hidden>
+          <div class="page-intro"><div><p class="eyebrow">SYNTHETIC TRANSACTION</p><h2 id="sales-title" tabindex="-1">Create a sample sale</h2><p>Reserve capacity, review the disabled-payment boundary, then issue a local synthetic ticket.</p></div><span class="pill pill-warning">No payment collected</span></div>
+          <ol class="stepper" aria-label="Sample sale steps"><li class="active"><span>1</span>Reserve</li><li><span>2</span>Confirm</li><li><span>3</span>Admit</li></ol>
+          <div class="two-col">
+            <form id="hold-form" class="panel" novalidate>
+              <div class="panel-heading"><div><p class="step-kicker">STEP 1</p><h3>Reserve admission</h3></div><span class="pill pill-neutral">10-minute hold</span></div>
+              <label for="product">Admission product</label><select id="product" name="product" required></select>
+              <label for="quantity">Guest quantity</label><input id="quantity" name="quantity" type="number" inputmode="numeric" min="1" max="10" value="1" required aria-describedby="quantity-help">
+              <p id="quantity-help" class="field-help">Choose 1–10 synthetic admissions, subject to available capacity.</p>
+              <button id="hold-submit" class="button button-primary" type="submit">Create capacity hold</button>
+            </form>
+            <article class="panel payment-boundary">
+              <div class="panel-heading"><div><p class="step-kicker">STEP 2</p><h3>Confirm sample order</h3></div><span class="pill pill-off">Payment disabled</span></div>
+              <p>Confirmation creates only an in-memory synthetic order and display-only ticket. It cannot contact a processor.</p>
+              <dl class="boundary-grid"><div><dt>Provider</dt><dd>Disabled placeholder</dd></div><div><dt>Card entry</dt><dd>Unavailable</dd></div><div><dt>Capture / refund</dt><dd>Unavailable</dd></div></dl>
+              <button id="confirm-order" class="button button-primary" type="button" disabled>Confirm without payment</button>
+              <p class="field-help">Create an active hold before confirmation becomes available.</p>
+            </article>
+          </div>
+          <p id="action-status" class="status" role="status" aria-live="polite"></p>
+        </section>
+
+        <section id="tickets" class="view" data-title="Admissions" aria-labelledby="tickets-title" hidden>
+          <div class="page-intro"><div><p class="eyebrow">ENTRY CONTROL</p><h2 id="tickets-title" tabindex="-1">Admissions</h2><p>Review issued synthetic tickets and exercise server-validated check-in.</p></div><span class="pill pill-warning">Display code only</span></div>
+          <div class="callout" role="note"><strong>Not a QR code</strong><span>Every pattern shown here is deliberately decorative and incompatible with scanners.</span></div>
+          <div id="ticket-list" class="cards"></div>
+          <article id="admissions" class="panel"></article>
+        </section>
+
+        <section id="reports" class="view" data-title="Reports" aria-labelledby="reports-title" hidden>
+          <div class="page-intro"><div><p class="eyebrow">PLAIN-LANGUAGE INSIGHTS</p><h2 id="reports-title" tabindex="-1">Understand the synthetic day</h2><p>Simple reports explain what happened without hiding the preview boundary.</p></div><span class="pill pill-neutral">Synthetic rows only</span></div>
+          <div class="callout muted" role="note"><strong>Report links remain available</strong><span>Exports require an authenticated click and contain synthetic data only. No report was downloaded during verification.</span></div>
+          <div id="report-list" class="cards report-grid"></div>
+        </section>
+
+        <section id="operations" class="view" data-title="System readiness" aria-labelledby="operations-title" hidden>
+          <div class="page-intro"><div><p class="eyebrow">READINESS & BOUNDARIES</p><h2 id="operations-title" tabindex="-1">System readiness</h2><p>See exactly what is local, read-only, manual, or disabled.</p></div><span class="pill pill-safe">Boundaries enforced</span></div>
+          <div id="operations-list" class="cards operations-grid"></div>
+        </section>
+      </div>
     </div>
   </main>
-  <footer><strong>NON-PRODUCTION / SYNTHETIC</strong> · Per-instance ephemeral memory only · Unsuitable for real sales, capacity, tickets, or check-in · No PII · No credentials · No provider writes</footer>
+  <footer><strong>NON-PRODUCTION / SYNTHETIC</strong><span>Per-instance ephemeral memory · Unsuitable for real sales, capacity, tickets, or check-in · No PII · No provider writes</span></footer>
 </body>
 </html>
