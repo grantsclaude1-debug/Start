@@ -10,6 +10,7 @@ const appRoot = fileURLToPath(new URL('..', import.meta.url));
 const passcode = randomBytes(24).toString('base64url');
 let server;
 let base;
+let handler;
 
 function request(path, { method = 'GET', body, headers = {} } = {}) {
   const url = new URL(path, base);
@@ -31,7 +32,7 @@ function request(path, { method = 'GET', body, headers = {} } = {}) {
 before(async () => {
   process.env.PRIVATE_GATE_VERIFIER = await encodeScryptVerifier(passcode);
   process.env.PRIVATE_GATE_SESSION_SECRET = randomBytes(32).toString('base64url');
-  const { default: handler } = await import(`../api/handler.js?test=${randomBytes(8).toString('hex')}`);
+  ({ default: handler } = await import(`../api/handler.js?test=${randomBytes(8).toString('hex')}`));
   delete process.env.PRIVATE_GATE_VERIFIER;
   delete process.env.PRIVATE_GATE_SESSION_SECRET;
   server = createServer(handler);
@@ -78,6 +79,36 @@ test('serverless proxy mode accepts HTTPS forwarded same-origin login and always
   assert.equal(response.status, 200);
   assert.equal(response.data.authenticated, true);
   assert.match(response.headers['set-cookie'][0], /; Secure$/);
+});
+
+test('serverless login tolerates a detached socket after proxy admission', async () => {
+  const payload = Buffer.from(JSON.stringify({ passcode }));
+  const req = {
+    url: '/api/auth/login',
+    method: 'POST',
+    headers: {
+      host: 'preview.example.test',
+      origin: 'https://preview.example.test',
+      'content-type': 'application/json',
+      'x-forwarded-for': '203.0.113.10',
+      'x-forwarded-proto': 'https',
+    },
+    socket: null,
+    async *[Symbol.asyncIterator]() { yield payload; },
+  };
+  let status;
+  let headers;
+  let responseBody;
+  const res = {
+    headersSent: false,
+    destroyed: false,
+    writeHead(nextStatus, nextHeaders) { status = nextStatus; headers = nextHeaders; this.headersSent = true; },
+    end(bytes) { responseBody = JSON.parse(Buffer.from(bytes).toString('utf8')); },
+  };
+  await handler(req, res);
+  assert.equal(status, 200);
+  assert.equal(responseBody.authenticated, true);
+  assert.match(headers['set-cookie'], /; Secure$/);
 });
 
 test('serverless health states synthetic per-instance ephemeral persistence', async () => {

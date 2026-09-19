@@ -73,7 +73,7 @@ function publicOrigin(value) {
 function sameOrigin(req, { trustProxy = false, externalOrigin = null } = {}) {
   const origin = req.headers.origin;
   if (!origin) return !req.headers['sec-fetch-site'] || ['same-origin', 'none'].includes(req.headers['sec-fetch-site']);
-  let protocol = req.socket.encrypted ? 'https' : 'http';
+  let protocol = req.socket?.encrypted ? 'https' : 'http';
   if (trustProxy) {
     const forwarded = String(req.headers['x-forwarded-proto'] ?? '').split(',')[0].trim().toLowerCase();
     if (forwarded === 'http' || forwarded === 'https') protocol = forwarded;
@@ -152,8 +152,9 @@ export function createDemoRequestHandler({ env = process.env, now = () => Date.n
       }
       if (url.pathname === '/api/auth/login' && req.method === 'POST') {
         if (!sameOrigin(req, { trustProxy, externalOrigin })) throw new DomainError('AUTH_FAILED');
+        const sourceBucket = String(req.headers['x-forwarded-for'] ?? req.headers['x-real-ip'] ?? req.socket?.remoteAddress ?? 'unknown').split(',')[0].trim() || 'unknown';
         const body = await readJson(req);
-        const session = await gate.authenticate({ passcode: body.passcode, sourceBucket: req.socket.remoteAddress ?? 'unknown', requestId: randomUUID() });
+        const session = await gate.authenticate({ passcode: body.passcode, sourceBucket, requestId: randomUUID() });
         const cookie = `${COOKIE}=${encodeURIComponent(session.token)}; HttpOnly; SameSite=Strict; Path=/; Max-Age=28800${secureCookie ? '; Secure' : ''}`;
         return send(res, 200, { authenticated: true, csrf: csrfFor(session.token, gateConfig.sessionSecret) }, { 'set-cookie': cookie });
       }
