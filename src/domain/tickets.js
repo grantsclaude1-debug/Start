@@ -33,7 +33,8 @@ export class AdmissionRegistry {
   constructor() { this.tickets = new Map(); this.attempts = []; this.keys = new Map(); }
   add(ticket) { this.tickets.set(ticket.id, { ...ticket }); }
   checkIn({ ticketId, idempotencyKey }) {
-    const previous = this.keys.get(idempotencyKey); if (previous) return previous;
+    assert(idempotencyKey, 'VALIDATION_FAILED');
+    const previous = this.keys.get(idempotencyKey); if (previous) { if (previous.ticketId !== ticketId) throw new DomainError('IDEMPOTENCY_MISMATCH'); return previous; }
     const ticket = this.tickets.get(ticketId); assert(ticket, 'NOT_FOUND');
     let result = 'ACCEPTED';
     if (ticket.status === 'VOID') result = 'VOID';

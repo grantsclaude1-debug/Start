@@ -147,6 +147,22 @@ test('authenticated report downloads are deterministic CSV/JSON and unknown stat
   assert.deepEqual(leak.data, { error: 'Request failed' });
 });
 
+test('resource APIs expose capacity, exceptions, reports, audit, imports, connectors, and non-downloadable export lifecycle', async () => {
+  for (const path of ['/api/products','/api/sessions','/api/capacity-blocks','/api/holds','/api/orders','/api/tickets','/api/checkins','/api/exceptions','/api/reports','/api/export-jobs','/api/audit','/api/connectors']) {
+    const response = await request(path, { headers: { cookie } }); assert.equal(response.status, 200, path);
+  }
+  const common = { cookie, origin: base, 'x-demo-csrf': csrf };
+  const upload = await request('/api/import/uploads', { method: 'POST', headers: common, body: { entity: 'products', format: 'json', content: '[{"sourceId":"api-product","name":"Synthetic API product","priceMinor":100}]', provenance: 'server-api-test', sourceVersion: '1' } });
+  assert.equal(upload.status, 201); const detect = await request(`/api/import/uploads/${upload.data.id}/detect`, { method: 'POST', headers: common, body: {} }); assert.deepEqual(detect.data.detectedFields, ['name','priceMinor','sourceId']);
+  const mapping = await request('/api/import/mappings', { method: 'POST', headers: common, body: { uploadId: upload.data.id, fields: { sourceId: 'sourceId', name: 'name', priceMinor: 'priceMinor' } } }); assert.equal(mapping.status, 201);
+  const validation = await request(`/api/import/uploads/${upload.data.id}/validate`, { method: 'POST', headers: common, body: { mappingId: mapping.data.id } }); assert.equal(validation.data.errorCount, 0);
+  const dryRun = await request('/api/import/jobs', { method: 'POST', headers: { ...common, 'idempotency-key': 'api-dry-run' }, body: { uploadId: upload.data.id, mappingId: mapping.data.id, mode: 'DRY_RUN', synthetic: true } }); assert.equal(dryRun.data.job.status, 'DRY_RUN_COMPLETE');
+  const reconciliation = await request(`/api/import/jobs/${dryRun.data.job.id}/reconciliation`, { headers: { cookie } }); assert.equal(reconciliation.data.balanced, true); assert.equal(reconciliation.data.committedRows, 0);
+  const queued = await request('/api/export-jobs', { method: 'POST', headers: { ...common, 'idempotency-key': 'api-export' }, body: { reportId: 'ticket_sales' } }); assert.equal(queued.data.job.downloadable, false);
+  const running = await request(`/api/export-jobs/${queued.data.job.id}/progress`, { method: 'POST', headers: common, body: { status: 'RUNNING' } }); assert.equal(running.data.job.status, 'RUNNING'); assert.equal(running.data.job.downloadable, false);
+  const connector = await request('/api/connectors/yellowDog', { headers: { cookie } }); assert.equal(connector.data.connection.providerCalls, 0); assert.equal(connector.data.connection.credentials.valuePresent, false);
+});
+
 test('logout revokes the in-memory session', async () => {
   const logout = await request('/api/auth/logout', { method: 'POST', body: {}, headers: { cookie, origin: base, 'x-demo-csrf': csrf } });
   assert.equal(logout.status, 200);

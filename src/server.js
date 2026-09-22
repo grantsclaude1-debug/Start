@@ -7,13 +7,14 @@ import { loadConfig, requireConfiguredGate } from './config.js';
 import { CapacityPool, HoldStore } from './domain/capacity.js';
 import { createOrder, transitionOrder } from './domain/orders.js';
 import { AdmissionRegistry, generateTicketSigningKeyPair, TicketTokenService } from './domain/tickets.js';
-import { exportReport, REPORT_DEFINITIONS } from './reporting/reports.js';
+import { exportReport, ExportJobStore, REPORT_DEFINITIONS } from './reporting/reports.js';
 import { Outbox } from './offline/outbox.js';
 import { YellowDogInventoryMirror } from './integrations/yellow-dog.js';
 import { ConnectorRegistry } from './integrations/connector-registry.js';
 import { GiftCardLedger } from './domain/gift-card-ledger.js';
 import { ImportCenter } from './imports/import-center.js';
 import { DomainError } from './errors.js';
+import { DomainEventLog, ExceptionCaseStore } from './domain/operations.js';
 
 const PUBLIC = new URL('../public/', import.meta.url);
 const STATIC = new Map([
@@ -104,7 +105,11 @@ function createState({ now = () => Date.now() } = {}) {
   giftCards.append({ cardId: 'GC-SYN-1001', type: 'ISSUED', amountMinor: 7500, idempotencyKey: 'fixture-gift-issue', reason: 'Synthetic opening liability', occurredAt: '2030-06-01T12:00:00.000Z' });
   giftCards.append({ cardId: 'GC-SYN-1001', type: 'REDEEMED', amountMinor: -1800, idempotencyKey: 'fixture-gift-redeem', reason: 'Synthetic admission redemption', occurredAt: '2030-06-01T13:00:00.000Z' });
   const connectors = new ConnectorRegistry({ now: () => new Date(now()).toISOString() });
-  return { holds, pool, tokens, admissions, outbox, mirror, giftCards, connectors, imports: new ImportCenter(), orders: [], tickets: [], saleQueue: [], exportJobs: [], audit: [], createdAt: new Date(now()).toISOString(), now };
+  const events = new DomainEventLog({ now: () => new Date(now()).toISOString() });
+  const exceptions = new ExceptionCaseStore({ now: () => new Date(now()).toISOString(), events });
+  exceptions.open({ type: 'READINESS', sourceType: 'Task', sourceId: 'TASK-SYN-001', severity: 'ATTENTION', summary: 'Opening readiness walk remains in progress.' });
+  const exports = new ExportJobStore({ now: () => new Date(now()).toISOString() });
+  return { holds, pool, tokens, admissions, outbox, mirror, giftCards, connectors, imports: new ImportCenter(), events, exceptions, exports, orders: [], tickets: [], saleQueue: [], createdAt: new Date(now()).toISOString(), now };
 }
 
 function csrfFor(token, secret) { return createHmac('sha256', secret).update(`csrf:${token}`).digest('base64url'); }
@@ -133,6 +138,7 @@ function snapshot(state, csrf) {
     products: PRODUCTS,
     session: { id: 'session-demo', label: '10:00 AM Synthetic Session', startsAt: '2030-06-01T14:00:00.000Z' },
     capacity: { total: state.pool.capacityTotal, blocked: state.pool.activeBlocks, held: state.pool.activeHolds, confirmed: state.pool.confirmed, available: state.pool.available, version: state.pool.version },
+    capacityBlocks: [{ id: 'block-maintenance-demo', poolId: state.pool.id, quantity: state.pool.activeBlocks, reason: 'Synthetic maintenance buffer', status: 'ACTIVE', startsAt: '2030-06-01T00:00:00.000Z', endsAt: '2030-06-02T00:00:00.000Z' }],
     holds: [...state.holds.holds.values()].map((hold) => ({ ...hold })),
     orders: state.orders,
     tickets: state.tickets.map(({ token: _token, ...ticket }) => ticket),
@@ -150,8 +156,10 @@ function snapshot(state, csrf) {
     importJobs: state.imports.history(),
     connectors: state.connectors.list(),
     connectorEvents: state.connectors.events(),
-    exportJobs: state.exportJobs,
-    audit: state.audit,
+    exportJobs: state.exports.list(),
+    exceptions: state.exceptions.list(),
+    audit: state.events.list(),
+    auditChainValid: state.events.verify(),
     summaries: {
       ticketsSold: state.orders.reduce((sum, order) => sum + order.lines.reduce((lineSum, line) => lineSum + line.quantity, 0), 0),
       acceptedAdmissions: state.admissions.attempts.filter((attempt) => attempt.result === 'ACCEPTED').length,
@@ -160,6 +168,7 @@ function snapshot(state, csrf) {
       inventoryUnits: state.mirror.list('items').reduce((sum, item) => sum + item.onHand, 0),
       openTasks: syntheticRecords.tasks.filter((task) => task.status !== 'DONE').length,
       importErrors: state.imports.history().reduce((sum, job) => sum + job.rejected, 0),
+      openExceptions: state.exceptions.list().filter((item) => item.status === 'OPEN').length,
     },
   };
 }
@@ -201,12 +210,36 @@ export function createDemoRequestHandler({ env = process.env, now = () => Date.n
       if (url.pathname === '/api/state' && req.method === 'GET') return send(res, 200, snapshot(state, context.csrf));
       if (url.pathname === '/api/products' && req.method === 'GET') return send(res, 200, { items: PRODUCTS });
       if (url.pathname === '/api/sessions' && req.method === 'GET') return send(res, 200, { items: snapshot(state, context.csrf).schedule });
+      if (url.pathname === '/api/capacity-blocks' && req.method === 'GET') return send(res, 200, { items: snapshot(state, context.csrf).capacityBlocks });
+      if (url.pathname === '/api/holds' && req.method === 'GET') return send(res, 200, { items: [...state.holds.holds.values()].map((hold) => ({ ...hold })) });
       if (url.pathname === '/api/orders' && req.method === 'GET') return send(res, 200, { items: state.orders });
       if (url.pathname === '/api/tickets' && req.method === 'GET') return send(res, 200, { items: snapshot(state, context.csrf).tickets });
       if (url.pathname === '/api/checkins' && req.method === 'GET') return send(res, 200, { items: state.admissions.attempts });
       if (url.pathname === '/api/imports' && req.method === 'GET') return send(res, 200, { items: state.imports.history() });
+      if (url.pathname === '/api/import/templates' && req.method === 'GET') return send(res, 200, { items: state.imports.templates() });
+      if (url.pathname === '/api/exceptions' && req.method === 'GET') return send(res, 200, { items: state.exceptions.list() });
+      if (url.pathname === '/api/reports' && req.method === 'GET') return send(res, 200, { items: snapshot(state, context.csrf).reports });
+      if (url.pathname === '/api/export-jobs' && req.method === 'GET') return send(res, 200, { items: state.exports.list() });
+      if (url.pathname === '/api/audit' && req.method === 'GET') return send(res, 200, { items: state.events.list(), chainValid: state.events.verify() });
       if (url.pathname === '/api/connectors' && req.method === 'GET') return send(res, 200, { items: state.connectors.list(), events: state.connectors.events() });
+      const connectorReadMatch = url.pathname.match(/^\/api\/connectors\/([A-Za-z0-9]+)$/);
+      if (connectorReadMatch && req.method === 'GET') return send(res, 200, { connection: state.connectors.get(connectorReadMatch[1]), records: state.connectors.records(connectorReadMatch[1]) });
       if (url.pathname === '/api/gift-cards' && req.method === 'GET') return send(res, 200, { cards: state.giftCards.cards(), entries: state.giftCards.entries(), chainValid: state.giftCards.verify() });
+      if (url.pathname === '/api/import/uploads' && req.method === 'POST') { const body = await readJson(req); return send(res, 201, state.imports.upload(body)); }
+      const importDetectMatch = url.pathname.match(/^\/api\/import\/uploads\/([^/]+)\/detect$/);
+      if (importDetectMatch && req.method === 'POST') return send(res, 200, state.imports.detect(importDetectMatch[1]));
+      if (url.pathname === '/api/import/mappings' && req.method === 'POST') { const body = await readJson(req); return send(res, 201, state.imports.createMapping(body)); }
+      const importValidateMatch = url.pathname.match(/^\/api\/import\/uploads\/([^/]+)\/validate$/);
+      if (importValidateMatch && req.method === 'POST') { const body = await readJson(req); return send(res, 200, state.imports.validate(importValidateMatch[1], body.mappingId)); }
+      const importPreviewMatch = url.pathname.match(/^\/api\/import\/uploads\/([^/]+)\/preview$/);
+      if (importPreviewMatch && req.method === 'GET') return send(res, 200, state.imports.previewForUpload(importPreviewMatch[1], url.searchParams.get('mappingId')));
+      const importErrorsMatch = url.pathname.match(/^\/api\/import\/uploads\/([^/]+)\/errors$/);
+      if (importErrorsMatch && req.method === 'GET') return send(res, 200, { items: state.imports.rowErrors(importErrorsMatch[1], url.searchParams.get('mappingId')) });
+      if (url.pathname === '/api/import/jobs' && req.method === 'POST') { const body = await readJson(req); const job = state.imports.createJobFromUpload({ ...body, idempotencyKey: String(req.headers['idempotency-key'] ?? ''), createdAt: new Date(now()).toISOString() }); state.events.append({ type: 'IMPORT_JOB_CREATED', aggregateType: 'ImportJob', aggregateId: job.id, payload: { mode: job.mode, synthetic: job.synthetic } }); return send(res, 201, { job, state: snapshot(state, context.csrf) }); }
+      const importJobMatch = url.pathname.match(/^\/api\/import\/jobs\/([^/]+)$/);
+      if (importJobMatch && req.method === 'GET') return send(res, 200, state.imports.job(importJobMatch[1]));
+      const importReconcileMatch = url.pathname.match(/^\/api\/import\/jobs\/([^/]+)\/reconciliation$/);
+      if (importReconcileMatch && req.method === 'GET') return send(res, 200, state.imports.reconciliation(importReconcileMatch[1]));
       if (url.pathname === '/api/imports/preview' && req.method === 'POST') {
         const body = await readJson(req);
         return send(res, 200, state.imports.preview({ entity: body.entity, format: body.format, content: body.content, mapping: body.mapping }));
@@ -214,27 +247,33 @@ export function createDemoRequestHandler({ env = process.env, now = () => Date.n
       if (url.pathname === '/api/imports/jobs' && req.method === 'POST') {
         const body = await readJson(req);
         const job = state.imports.createJob({ entity: body.entity, format: body.format, content: body.content, mapping: body.mapping, dryRun: body.dryRun !== false, idempotencyKey: String(req.headers['idempotency-key'] ?? ''), createdAt: new Date(now()).toISOString() });
-        state.audit.push({ sequence: state.audit.length + 1, type: 'IMPORT_JOB_CREATED', aggregateId: job.id, at: job.createdAt, synthetic: true });
+        state.events.append({ type: 'IMPORT_JOB_CREATED', aggregateType: 'ImportJob', aggregateId: job.id, payload: { mode: job.mode, accepted: job.accepted, rejected: job.rejected, synthetic: true } });
         return send(res, 201, { job, state: snapshot(state, context.csrf) });
       }
-      const connectorMatch = url.pathname.match(/^\/api\/connectors\/(roller|stripe|yellowDog|splashRadio)\/simulate$/);
+      const connectorMatch = url.pathname.match(/^\/api\/connectors\/([A-Za-z0-9]+)\/simulate$/);
       if (connectorMatch && req.method === 'POST') {
         const body = await readJson(req);
         const connector = state.connectors.run(connectorMatch[1], body.scenario);
-        state.audit.push({ sequence: state.audit.length + 1, type: 'CONNECTOR_SIMULATED', aggregateId: connector.id, at: connector.lastCheckedAt, synthetic: true });
+        state.events.append({ type: 'CONNECTOR_SIMULATED', aggregateType: 'Connection', aggregateId: connector.id, payload: { scenario: connector.scenario, status: connector.status, providerCalls: 0 } });
+        if (['NEEDS_MAPPING', 'AUTH_BLOCKED', 'PARTIAL', 'SEQUENCE_GAP', 'CONFLICT', 'EXPIRED'].includes(connector.status)) state.exceptions.open({ type: 'INTEGRATION', sourceType: 'Connection', sourceId: connector.id, summary: connector.lastResult });
         return send(res, 200, { connector, state: snapshot(state, context.csrf) });
       }
       if (url.pathname === '/api/gift-cards/entries' && req.method === 'POST') {
         const body = await readJson(req);
         const entry = state.giftCards.append({ cardId: body.cardId, type: body.type, amountMinor: body.amountMinor, reason: body.reason, idempotencyKey: String(req.headers['idempotency-key'] ?? ''), occurredAt: new Date(now()).toISOString() });
-        state.audit.push({ sequence: state.audit.length + 1, type: 'GIFT_LEDGER_ENTRY_APPENDED', aggregateId: entry.cardId, at: entry.occurredAt, synthetic: true });
+        state.events.append({ type: 'GIFT_LEDGER_ENTRY_APPENDED', aggregateType: 'GiftCard', aggregateId: entry.cardId, payload: { amountMinor: entry.amountMinor, synthetic: true } });
         return send(res, 201, { entry, balanceMinor: state.giftCards.balance(entry.cardId), state: snapshot(state, context.csrf) });
       }
+      const exportJobMatch = url.pathname.match(/^\/api\/export-jobs\/([^/]+)$/);
+      if (exportJobMatch && req.method === 'GET') { const job = state.exports.list().find((item) => item.id === exportJobMatch[1]); if (!job) throw new DomainError('NOT_FOUND'); return send(res, 200, job); }
+      const exportProgressMatch = url.pathname.match(/^\/api\/export-jobs\/([^/]+)\/progress$/);
+      if (exportProgressMatch && req.method === 'POST') { const body = await readJson(req); const job = state.exports.progress(exportProgressMatch[1], body.status); state.events.append({ type: 'EXPORT_JOB_PROGRESS', aggregateType: 'ExportJob', aggregateId: job.id, payload: { status: job.status, downloadable: false } }); return send(res, 200, { job, state: snapshot(state, context.csrf) }); }
       if (url.pathname === '/api/export-jobs' && req.method === 'POST') {
         const body = await readJson(req);
         if (!REPORT_DEFINITIONS[body.reportId]) throw new DomainError('VALIDATION_FAILED');
-        const job = Object.freeze({ id: `export-${String(state.exportJobs.length + 1).padStart(4, '0')}`, reportId: body.reportId, status: 'QUEUED', downloadable: false, synthetic: true, createdAt: new Date(now()).toISOString() });
-        state.exportJobs.push(job); return send(res, 202, { job, state: snapshot(state, context.csrf) });
+        const job = state.exports.create({ reportId: body.reportId, format: body.format ?? 'csv', idempotencyKey: String(req.headers['idempotency-key'] ?? '') });
+        state.events.append({ type: 'EXPORT_JOB_QUEUED', aggregateType: 'ExportJob', aggregateId: job.id, payload: { reportId: job.reportId, downloadable: false } });
+        return send(res, 202, { job, state: snapshot(state, context.csrf) });
       }
       if (url.pathname === '/api/auth/logout' && req.method === 'POST') {
         gate.revoke(context.token);
@@ -245,6 +284,7 @@ export function createDemoRequestHandler({ env = process.env, now = () => Date.n
         if (!Number.isSafeInteger(quantity) || quantity < 1 || quantity > 10) throw new DomainError('VALIDATION_FAILED');
         const key = String(req.headers['idempotency-key'] ?? '');
         const hold = state.holds.createHold({ id: randomUUID(), poolId: state.pool.id, quantity, expiresAt: now() + 10 * 60_000, idempotencyKey: key });
+        state.events.append({ type: 'HOLD_CREATED', aggregateType: 'Hold', aggregateId: hold.id, payload: { quantity: hold.quantity, expiresAt: hold.expiresAt } });
         return send(res, 201, { hold, state: snapshot(state, context.csrf) });
       }
       if (url.pathname === '/api/orders' && req.method === 'POST') {
@@ -261,7 +301,9 @@ export function createDemoRequestHandler({ env = process.env, now = () => Date.n
         state.tickets.push(Object.freeze({ ...publicTicket, token: issued.token }));
         state.outbox.append({ eventType: 'synthetic.order.confirmed.v1', aggregateType: 'Order', aggregateId: order.id, aggregateVersion: order.version, payload: { totalMinor: order.totalMinor, synthetic: true }, idempotencyKey: `outbox-${order.id}` });
         state.saleQueue.push({ id: order.id, status: 'LOCAL_ONLY', destination: 'Yellow Dog disabled' });
-        return send(res, 201, { order, ticket: publicTicket, payment: { status: 'DISABLED_PLACEHOLDER' }, state: snapshot(state, context.csrf) });
+        state.events.append({ type: 'ORDER_CONFIRMED', aggregateType: 'Order', aggregateId: order.id, payload: { totalMinor: order.totalMinor, paymentState: 'STORED_FOR_AUTHORIZATION_NOT_PAID', synthetic: true } });
+        state.events.append({ type: 'TICKET_ISSUED', aggregateType: 'Ticket', aggregateId: ticketId, payload: { orderId: order.id, maxEntries: hold.quantity } });
+        return send(res, 201, { order, ticket: publicTicket, payment: { status: 'DISABLED_PLACEHOLDER', authorizationStatus: 'STORED_FOR_AUTHORIZATION', paid: false, language: 'Stored for authorization — not paid', providerCalls: 0 }, state: snapshot(state, context.csrf) });
       }
       if (url.pathname === '/api/checkins' && req.method === 'POST') {
         const body = await readJson(req); const ticket = state.tickets.find((item) => item.id === body.ticketId);
@@ -269,6 +311,8 @@ export function createDemoRequestHandler({ env = process.env, now = () => Date.n
         const idempotencyKey = String(req.headers['idempotency-key'] ?? '');
         if (!idempotencyKey) throw new DomainError('VALIDATION_FAILED');
         const result = state.admissions.checkIn({ ticketId: ticket.id, idempotencyKey });
+        state.events.append({ type: 'CHECK_IN_ATTEMPTED', aggregateType: 'Ticket', aggregateId: ticket.id, payload: { result: result.result, sequence: result.sequence } });
+        if (result.result !== 'ACCEPTED') state.exceptions.open({ type: 'ADMISSION', sourceType: 'Ticket', sourceId: ticket.id, summary: `${result.result}: manager review may be required.` });
         return send(res, result.result === 'ACCEPTED' ? 201 : 409, { result, state: snapshot(state, context.csrf) });
       }
       const reportMatch = url.pathname.match(/^\/api\/reports\/([a-z_]+)\.(csv|json)$/);

@@ -1,0 +1,77 @@
+# Second implementation pass evidence — 2026-09-21
+
+This evidence covers the binding requirements in [Implementation acceptance — 2026-09-21](implementation-acceptance-2026-09-21.md).
+
+## Baseline and scope
+
+- Starting commit: `983d2668553ef1841e997f0480923cea6c6cc35f`.
+- Starting tree: clean; branch `main` was one local commit ahead of `origin/main`.
+- Work stayed inside this repository. No push, deployment, provider call, external message, or download was performed.
+- The implementation remains dependency-free and uses only Node.js built-ins.
+
+## Implemented product surface
+
+- Dense evergreen/off-white/lime console with a 264 px collapsible rail, mobile Today/Sell/Scan/More navigation, contextual top action, service time, freshness, health, and account boundary.
+- Today, Sell, Admissions, Bookings, Orders, Catalog, Schedule/Capacity, Operations Home, Exceptions/Recovery, Reports, Reconciliation, Integrations, Readiness, Offline Simulator, Audit, Import Center, and the retained synthetic supporting surfaces.
+- Production tables, filters, forms, badges, timelines, sticky checkout summary, booking detail drawer, integration tabs, loading/empty/error/disabled states, explicit production blockers, mobile table transformation, full-height mobile drawer behavior, reduced motion, forced colors, and visible focus.
+- Exact wording for `Queued`, `Stored for authorization — not paid`, `Paid`, `Accepted`, `Denied`, and `Manager review`.
+
+## Domain and API controls
+
+- Resource reads for products, sessions, capacity blocks, holds, orders, tickets, check-ins, exceptions, reports, export jobs, audit, connectors, and integration detail.
+- Controlled clock and deterministic job runner for expiry/progression/retry work.
+- Deterministic fake payment provider with stored, authorized, paid, and denied fixtures; no raw-card handling and zero provider calls.
+- Real local Ed25519 ticket tokens and server-side admission registry.
+- Hash-linked append-only domain event projection and immutable exception cases.
+- Atomic checkout service rolls back hold, order, ticket, admission, outbox, and audit state at every injected boundary.
+- Export lifecycle `QUEUED → RUNNING → RENDERED | FAILED → EXPIRED`, always non-downloadable in the UI lifecycle.
+
+## Import Center
+
+- Templates: products, sessions, orders, tickets, customers, memberships, gift cards, inventory references, waivers, and check-ins.
+- CSV, JSON, and NDJSON parsing; bounded bytes/rows; format detection; explicit mapping, constants, allow-listed transforms, and required `IGNORE` for unknown source fields.
+- Stable source IDs, SHA-256 content hashes, mapping versions, provenance/version collision blocking, deterministic error codes, row errors, control totals, reconciliation, and deterministic history.
+- Formula-prefix neutralization for `=`, `+`, `-`, and `@` in previews and report CSV.
+- Rejection of detected secrets, access tokens, payment-card numbers that pass Luhn validation, email addresses, and telephone patterns.
+- Dry run has zero mutation. Commit is reachable only for explicitly synthetic fixture data and rolls back fully under injected failure.
+- ROLLER remains read-only with no writeback or generic-request proxy.
+
+## Integration kernel
+
+- Connection metadata includes kind, mode, status, capabilities, mapping version, checkpoint, health, queue metrics, and missing secret-reference status without secret values.
+- Immutable command, attempt, acknowledgement, exception, and reconciliation records.
+- Command lifecycle is `DRAFT → VALIDATED → DRY_RUN_QUEUED → RENDERED` or `REJECTED`; `LIVE` is unreachable and unsupported capabilities fail before I/O.
+- Local scenarios cover Stripe lifecycle fixtures, Yellow Dog throttling/retry/checkpoint/mapping/token/partial states, ROLLER rehearsal, Splash Radio manual acknowledgement, offline duplicate/gap/conflict/expiry, reports, and disabled placeholders for Resend, KDS, Campaign Monitor, Groupon, Xero, and generic webhooks.
+- Every record and UI card reports zero provider calls.
+
+## Automated verification
+
+`npm run verify` passes after implementation. The suite covers:
+
+- capacity floor, final-unit contention, and expiry/consume races;
+- idempotency mismatch behavior;
+- integer-only money;
+- injected checkout atomicity;
+- gate authentication and anonymous/authenticated API boundaries;
+- malformed JSON, wrong content type, oversized body, import abuse, provenance collision, dry-run zero mutation, atomic commit, reconciliation, and deterministic history;
+- formula neutralization;
+- duplicate check-ins;
+- export lifecycle without download;
+- connector retry/mapping/token/rate/partial/gap/conflict states without provider calls;
+- secret scanning and response security headers;
+- Vercel adapter fail-closed behavior.
+
+## Rendered verification
+
+The exact machine-readable result is [rendered-verification-2026-09-21.json](rendered-verification-2026-09-21.json).
+
+- Headless installed Chrome rendered all 22 authenticated views at 320, 375, 768, 1024, and 1440 px: 110 route/viewport checks.
+- Every check confirmed the route was visible, heading focus moved correctly, and document width did not overflow the viewport.
+- Exercised authentication, native invalid-quantity feedback, hold creation, local order/ticket issuance, accepted and duplicate admissions, export queueing, connector retry, exception creation, and logout focus/revocation.
+- Rendered and verified explicit loading, empty, error, stale, and access-denied states after the final layout change.
+- The duplicate admission intentionally returned HTTP 409 and rendered the explicit duplicate state.
+- Final console errors: 0. External/provider requests: 0. Downloads: 0. Observed requests: 14, all loopback same-origin (plus a browser-generated inline `data:` date-control icon, excluded as neither network nor external traffic).
+
+## Remaining production blockers
+
+This is not production-ready. All state, authentication sessions, signing keys, queues, events, imports, orders, tickets, and check-ins are process-local and ephemeral. Durable shared storage, transactional multi-instance coordination, production authentication/RBAC/MFA, secret management, monitoring, backup/recovery, real provider certification, privacy controls, and deployment proof remain blocked.

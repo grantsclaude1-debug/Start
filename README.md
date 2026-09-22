@@ -47,14 +47,14 @@ This preview does not become durable because it is hosted. Each warm function in
 
 ## What is implemented
 
-- Responsive WCAG-oriented operator console with desktop rail, mobile bottom navigation, visible focus, reduced-motion and forced-colors rules, and persistent **NON-PRODUCTION / SYNTHETIC** warnings.
+- Dense responsive WCAG-oriented operator console with a 264 px collapsible desktop rail, Today/Sell/Scan/More mobile navigation, visible focus, reduced-motion and forced-colors rules, and persistent **NON-PRODUCTION / SYNTHETIC** warnings.
 - Today cross-workflow summaries; schedule/calendar capacity; guided sell; orders; signed-ticket admissions; PII-free customer/waiver placeholders; memberships/passes; products; inventory; role-only staff/tasks; reporting; settings; and connector status.
 - Server-side hold validation, idempotency, version checks, expiry rules, and oversell rejection, with integer-minor-unit order totals and an explicitly disabled fake payment provider.
 - Append-only, idempotent, hash-linked gift-card liability ledger with overdraft rejection and immutable projections.
-- Import Center for operator-selected local CSV/JSON: browser file reading, deterministic server validation and mapping, preview, formula neutralization, bounded rows/bytes, dry-run jobs, history, errors, and summaries. Fixtures and examples remain synthetic.
-- Deterministic local connector scenarios for ROLLER read-only migration, Stripe disabled boundaries, Yellow Dog read-only inventory, and Splash Radio manual-only status. Retry/rate-limit, mapping, token-expiry, partial, empty, and healthy states make **zero provider calls**.
+- Import Center for operator-selected local CSV/JSON/NDJSON: ten entity templates, deterministic detection and mapping, constants and allow-listed transforms, explicit ignore decisions, preview, formula neutralization, secret/PAN/PII rejection, bounded rows/bytes, zero-mutation dry runs, synthetic-only atomic commits, history, errors, control totals, and reconciliation.
+- Common local integration kernel with immutable commands, attempts, acknowledgements, exceptions, and reconciliation; deterministic fixtures for Stripe lifecycle states, ROLLER read-only migration, Yellow Dog inventory/retry/checkpoint behavior, Splash Radio manual acknowledgement, offline conflict states, reports, and disabled placeholders. Every path makes **zero provider calls**, and `LIVE` is unreachable.
 - Synthetic signed ticket issuance and server-validated idempotent accepted/duplicate outcomes. Display codes are deliberately not scanner-compatible.
-- Deterministic report/export-job lifecycle state without initiating a browser download from the UI.
+- Deterministic report/export-job lifecycle state without initiating a browser download from the UI, plus a controlled clock/job runner, append-only domain events, and explicit exception cases.
 - In-memory hash-chained offline/outbox demonstration and append-only local audit projection.
 - Exact static-file allowlist, no directory serving, traversal rejection, response security headers, 16 KiB JSON body limit, JSON content-type enforcement, origin/Sec-Fetch checks, and per-session CSRF tokens for mutations.
 
@@ -77,6 +77,8 @@ This preview does not become durable because it is hosted. Each warm function in
 All state, ticket signing keys, sessions, orders, holds, tickets, check-ins, report inputs, mirrors, and queues are synthetic and process-local.
 
 ## Verification
+
+The second-pass implementation and rendered evidence are recorded in [docs/second-pass-evidence-2026-09-21.md](docs/second-pass-evidence-2026-09-21.md) and [docs/rendered-verification-2026-09-21.json](docs/rendered-verification-2026-09-21.json).
 
 ```sh
 npm run verify

@@ -1,0 +1,844 @@
+{
+  "widths": {
+    "320": [
+      {
+        "route": "today",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Today at Dig n Zone"
+      },
+      {
+        "route": "sell",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Sell admission"
+      },
+      {
+        "route": "admissions",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Admissions"
+      },
+      {
+        "route": "bookings",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Run sheet"
+      },
+      {
+        "route": "catalog",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Catalog"
+      },
+      {
+        "route": "reports",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Report workspace"
+      },
+      {
+        "route": "operations",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Opening readiness"
+      },
+      {
+        "route": "schedule",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Schedule"
+      },
+      {
+        "route": "exceptions",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Exception cases"
+      },
+      {
+        "route": "reconciliation",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Reconciliation"
+      },
+      {
+        "route": "integrations",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Connector boundaries"
+      },
+      {
+        "route": "settings",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Venue configuration"
+      },
+      {
+        "route": "orders",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Orders"
+      },
+      {
+        "route": "imports",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Validate local files"
+      },
+      {
+        "route": "readiness",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Readiness & health"
+      },
+      {
+        "route": "offline",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Offline simulator"
+      },
+      {
+        "route": "audit",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Append-only audit"
+      },
+      {
+        "route": "customers",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Customer references"
+      },
+      {
+        "route": "memberships",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Entitlements"
+      },
+      {
+        "route": "giftcards",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Gift-card liability ledger"
+      },
+      {
+        "route": "inventory",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Yellow Dog mirror"
+      },
+      {
+        "route": "staff",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Coverage and work"
+      }
+    ],
+    "375": [
+      {
+        "route": "today",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Today at Dig n Zone"
+      },
+      {
+        "route": "sell",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Sell admission"
+      },
+      {
+        "route": "admissions",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Admissions"
+      },
+      {
+        "route": "bookings",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Run sheet"
+      },
+      {
+        "route": "catalog",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Catalog"
+      },
+      {
+        "route": "reports",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Report workspace"
+      },
+      {
+        "route": "operations",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Opening readiness"
+      },
+      {
+        "route": "schedule",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Schedule"
+      },
+      {
+        "route": "exceptions",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Exception cases"
+      },
+      {
+        "route": "reconciliation",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Reconciliation"
+      },
+      {
+        "route": "integrations",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Connector boundaries"
+      },
+      {
+        "route": "settings",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Venue configuration"
+      },
+      {
+        "route": "orders",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Orders"
+      },
+      {
+        "route": "imports",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Validate local files"
+      },
+      {
+        "route": "readiness",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Readiness & health"
+      },
+      {
+        "route": "offline",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Offline simulator"
+      },
+      {
+        "route": "audit",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Append-only audit"
+      },
+      {
+        "route": "customers",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Customer references"
+      },
+      {
+        "route": "memberships",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Entitlements"
+      },
+      {
+        "route": "giftcards",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Gift-card liability ledger"
+      },
+      {
+        "route": "inventory",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Yellow Dog mirror"
+      },
+      {
+        "route": "staff",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Coverage and work"
+      }
+    ],
+    "768": [
+      {
+        "route": "today",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Today at Dig n Zone"
+      },
+      {
+        "route": "sell",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Sell admission"
+      },
+      {
+        "route": "admissions",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Admissions"
+      },
+      {
+        "route": "bookings",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Run sheet"
+      },
+      {
+        "route": "catalog",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Catalog"
+      },
+      {
+        "route": "reports",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Report workspace"
+      },
+      {
+        "route": "operations",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Opening readiness"
+      },
+      {
+        "route": "schedule",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Schedule"
+      },
+      {
+        "route": "exceptions",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Exception cases"
+      },
+      {
+        "route": "reconciliation",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Reconciliation"
+      },
+      {
+        "route": "integrations",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Connector boundaries"
+      },
+      {
+        "route": "settings",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Venue configuration"
+      },
+      {
+        "route": "orders",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Orders"
+      },
+      {
+        "route": "imports",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Validate local files"
+      },
+      {
+        "route": "readiness",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Readiness & health"
+      },
+      {
+        "route": "offline",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Offline simulator"
+      },
+      {
+        "route": "audit",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Append-only audit"
+      },
+      {
+        "route": "customers",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Customer references"
+      },
+      {
+        "route": "memberships",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Entitlements"
+      },
+      {
+        "route": "giftcards",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Gift-card liability ledger"
+      },
+      {
+        "route": "inventory",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Yellow Dog mirror"
+      },
+      {
+        "route": "staff",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Coverage and work"
+      }
+    ],
+    "1024": [
+      {
+        "route": "today",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Today at Dig n Zone"
+      },
+      {
+        "route": "sell",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Sell admission"
+      },
+      {
+        "route": "admissions",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Admissions"
+      },
+      {
+        "route": "bookings",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Run sheet"
+      },
+      {
+        "route": "catalog",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Catalog"
+      },
+      {
+        "route": "reports",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Report workspace"
+      },
+      {
+        "route": "operations",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Opening readiness"
+      },
+      {
+        "route": "schedule",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Schedule"
+      },
+      {
+        "route": "exceptions",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Exception cases"
+      },
+      {
+        "route": "reconciliation",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Reconciliation"
+      },
+      {
+        "route": "integrations",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Connector boundaries"
+      },
+      {
+        "route": "settings",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Venue configuration"
+      },
+      {
+        "route": "orders",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Orders"
+      },
+      {
+        "route": "imports",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Validate local files"
+      },
+      {
+        "route": "readiness",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Readiness & health"
+      },
+      {
+        "route": "offline",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Offline simulator"
+      },
+      {
+        "route": "audit",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Append-only audit"
+      },
+      {
+        "route": "customers",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Customer references"
+      },
+      {
+        "route": "memberships",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Entitlements"
+      },
+      {
+        "route": "giftcards",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Gift-card liability ledger"
+      },
+      {
+        "route": "inventory",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Yellow Dog mirror"
+      },
+      {
+        "route": "staff",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Coverage and work"
+      }
+    ],
+    "1440": [
+      {
+        "route": "today",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Today at Dig n Zone"
+      },
+      {
+        "route": "sell",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Sell admission"
+      },
+      {
+        "route": "admissions",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Admissions"
+      },
+      {
+        "route": "bookings",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Run sheet"
+      },
+      {
+        "route": "catalog",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Catalog"
+      },
+      {
+        "route": "reports",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Report workspace"
+      },
+      {
+        "route": "operations",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Opening readiness"
+      },
+      {
+        "route": "schedule",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Schedule"
+      },
+      {
+        "route": "exceptions",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Exception cases"
+      },
+      {
+        "route": "reconciliation",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Reconciliation"
+      },
+      {
+        "route": "integrations",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Connector boundaries"
+      },
+      {
+        "route": "settings",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Venue configuration"
+      },
+      {
+        "route": "orders",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Orders"
+      },
+      {
+        "route": "imports",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Validate local files"
+      },
+      {
+        "route": "readiness",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Readiness & health"
+      },
+      {
+        "route": "offline",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Offline simulator"
+      },
+      {
+        "route": "audit",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Append-only audit"
+      },
+      {
+        "route": "customers",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Customer references"
+      },
+      {
+        "route": "memberships",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Entitlements"
+      },
+      {
+        "route": "giftcards",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Gift-card liability ledger"
+      },
+      {
+        "route": "inventory",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Yellow Dog mirror"
+      },
+      {
+        "route": "staff",
+        "visible": true,
+        "focus": true,
+        "overflow": true,
+        "heading": "Coverage and work"
+      }
+    ]
+  },
+  "flows": [
+    "authenticated",
+    "invalid quantity blocked",
+    "hold created",
+    "order and signed ticket created",
+    "accepted and duplicate admission states",
+    "export queued without download",
+    "connector retry rendered",
+    "exception queue updated",
+    "logout revoked and returned focus"
+  ],
+  "consoleErrors": [],
+  "requests": [
+    "http://127.0.0.1:43127/api/auth/status",
+    "http://127.0.0.1:43127/api/auth/login",
+    "http://127.0.0.1:43127/api/auth/status",
+    "http://127.0.0.1:43127/api/state",
+    "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNSIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBmaWxsPSJXaW5kb3dUZXh0IiBkPSJNMjAgM2gtMVYxaC0ydjJIN1YxSDV2Mkg0Yy0xLjEgMC0yIC45LTIgMnYxNmMwIDEuMS45IDIgMiAyaDE2YzEuMSAwIDItLjkgMi0yVjVjMC0xLjEtLjktMi0yLTJ6bTAgMThINFY4aDE2djEzeiIvPjxwYXRoIGZpbGw9Im5vbmUiIGQ9Ik0wIDBoMjR2MjRIMHoiLz48L3N2Zz4=",
+    "http://127.0.0.1:43127/api/holds",
+    "http://127.0.0.1:43127/api/orders",
+    "http://127.0.0.1:43127/api/checkins",
+    "http://127.0.0.1:43127/api/checkins",
+    "http://127.0.0.1:43127/api/export-jobs",
+    "http://127.0.0.1:43127/api/connectors/yellowDog/simulate",
+    "http://127.0.0.1:43127/api/connectors/yellowDog/simulate",
+    "http://127.0.0.1:43127/api/auth/logout",
+    "http://127.0.0.1:43127/api/auth/status"
+  ],
+  "expectedConflict": "Duplicate check-in produced the expected HTTP 409 and rendered DUPLICATE state",
+  "externalRequests": [],
+  "downloads": 0,
+  "allRoutesPass": true,
+  "stateChecks": [
+    {
+      "state": "loading",
+      "visible": true,
+      "text": "LoadingLocal state is being refreshed and announced."
+    },
+    {
+      "state": "empty",
+      "visible": true,
+      "text": "EmptyNo queued synchronization work."
+    },
+    {
+      "state": "error",
+      "visible": true,
+      "text": "ErrorThe request failed without mutation; retry safely."
+    },
+    {
+      "state": "stale",
+      "visible": true,
+      "text": "StaleInventory freshness needs manager review."
+    },
+    {
+      "state": "access-denied",
+      "visible": true,
+      "text": "Access deniedLive actions require production identity and are unavailable."
+    }
+  ],
+  "finalLayoutRetest": "Passed after final state-handling UI addition"
+}
