@@ -1,158 +1,175 @@
 {
+  "generatedAt": "2026-09-22T02:01:40.292Z",
+  "login": {
+    "failed": {
+      "message": "Unable to authenticate. Check the passcode and try again.",
+      "focus": true,
+      "consoleHidden": true
+    },
+    "success": true,
+    "focusAfterSuccess": true
+  },
   "widths": {
     "320": [
       {
         "route": "today",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Today at Dig n Zone"
       },
       {
         "route": "sell",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Sell admission"
       },
       {
         "route": "admissions",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Admissions"
       },
       {
         "route": "bookings",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Run sheet"
       },
       {
         "route": "catalog",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Catalog"
       },
       {
         "route": "reports",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Report workspace"
+      },
+      {
+        "route": "finance",
+        "visible": true,
+        "focus": true,
+        "noHorizontalOverflow": true,
+        "heading": "Synthetic finance lifecycle"
       },
       {
         "route": "operations",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Opening readiness"
       },
       {
         "route": "schedule",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Schedule"
       },
       {
         "route": "exceptions",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Exception cases"
       },
       {
         "route": "reconciliation",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Reconciliation"
       },
       {
         "route": "integrations",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Connector boundaries"
       },
       {
         "route": "settings",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Venue configuration"
       },
       {
         "route": "orders",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Orders"
       },
       {
         "route": "imports",
         "visible": true,
         "focus": true,
-        "overflow": true,
-        "heading": "Validate local files"
+        "noHorizontalOverflow": true,
+        "heading": "Synthetic import workflow"
       },
       {
         "route": "readiness",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Readiness & health"
       },
       {
         "route": "offline",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Offline simulator"
       },
       {
         "route": "audit",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Append-only audit"
       },
       {
         "route": "customers",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Customer references"
       },
       {
         "route": "memberships",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Entitlements"
       },
       {
         "route": "giftcards",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Gift-card liability ledger"
       },
       {
         "route": "inventory",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Yellow Dog mirror"
       },
       {
         "route": "staff",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Coverage and work"
       }
     ],
@@ -161,154 +178,161 @@
         "route": "today",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Today at Dig n Zone"
       },
       {
         "route": "sell",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Sell admission"
       },
       {
         "route": "admissions",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Admissions"
       },
       {
         "route": "bookings",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Run sheet"
       },
       {
         "route": "catalog",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Catalog"
       },
       {
         "route": "reports",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Report workspace"
+      },
+      {
+        "route": "finance",
+        "visible": true,
+        "focus": true,
+        "noHorizontalOverflow": true,
+        "heading": "Synthetic finance lifecycle"
       },
       {
         "route": "operations",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Opening readiness"
       },
       {
         "route": "schedule",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Schedule"
       },
       {
         "route": "exceptions",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Exception cases"
       },
       {
         "route": "reconciliation",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Reconciliation"
       },
       {
         "route": "integrations",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Connector boundaries"
       },
       {
         "route": "settings",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Venue configuration"
       },
       {
         "route": "orders",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Orders"
       },
       {
         "route": "imports",
         "visible": true,
         "focus": true,
-        "overflow": true,
-        "heading": "Validate local files"
+        "noHorizontalOverflow": true,
+        "heading": "Synthetic import workflow"
       },
       {
         "route": "readiness",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Readiness & health"
       },
       {
         "route": "offline",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Offline simulator"
       },
       {
         "route": "audit",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Append-only audit"
       },
       {
         "route": "customers",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Customer references"
       },
       {
         "route": "memberships",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Entitlements"
       },
       {
         "route": "giftcards",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Gift-card liability ledger"
       },
       {
         "route": "inventory",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Yellow Dog mirror"
       },
       {
         "route": "staff",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Coverage and work"
       }
     ],
@@ -317,154 +341,161 @@
         "route": "today",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Today at Dig n Zone"
       },
       {
         "route": "sell",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Sell admission"
       },
       {
         "route": "admissions",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Admissions"
       },
       {
         "route": "bookings",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Run sheet"
       },
       {
         "route": "catalog",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Catalog"
       },
       {
         "route": "reports",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Report workspace"
+      },
+      {
+        "route": "finance",
+        "visible": true,
+        "focus": true,
+        "noHorizontalOverflow": true,
+        "heading": "Synthetic finance lifecycle"
       },
       {
         "route": "operations",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Opening readiness"
       },
       {
         "route": "schedule",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Schedule"
       },
       {
         "route": "exceptions",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Exception cases"
       },
       {
         "route": "reconciliation",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Reconciliation"
       },
       {
         "route": "integrations",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Connector boundaries"
       },
       {
         "route": "settings",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Venue configuration"
       },
       {
         "route": "orders",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Orders"
       },
       {
         "route": "imports",
         "visible": true,
         "focus": true,
-        "overflow": true,
-        "heading": "Validate local files"
+        "noHorizontalOverflow": true,
+        "heading": "Synthetic import workflow"
       },
       {
         "route": "readiness",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Readiness & health"
       },
       {
         "route": "offline",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Offline simulator"
       },
       {
         "route": "audit",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Append-only audit"
       },
       {
         "route": "customers",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Customer references"
       },
       {
         "route": "memberships",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Entitlements"
       },
       {
         "route": "giftcards",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Gift-card liability ledger"
       },
       {
         "route": "inventory",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Yellow Dog mirror"
       },
       {
         "route": "staff",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Coverage and work"
       }
     ],
@@ -473,154 +504,161 @@
         "route": "today",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Today at Dig n Zone"
       },
       {
         "route": "sell",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Sell admission"
       },
       {
         "route": "admissions",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Admissions"
       },
       {
         "route": "bookings",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Run sheet"
       },
       {
         "route": "catalog",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Catalog"
       },
       {
         "route": "reports",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Report workspace"
+      },
+      {
+        "route": "finance",
+        "visible": true,
+        "focus": true,
+        "noHorizontalOverflow": true,
+        "heading": "Synthetic finance lifecycle"
       },
       {
         "route": "operations",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Opening readiness"
       },
       {
         "route": "schedule",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Schedule"
       },
       {
         "route": "exceptions",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Exception cases"
       },
       {
         "route": "reconciliation",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Reconciliation"
       },
       {
         "route": "integrations",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Connector boundaries"
       },
       {
         "route": "settings",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Venue configuration"
       },
       {
         "route": "orders",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Orders"
       },
       {
         "route": "imports",
         "visible": true,
         "focus": true,
-        "overflow": true,
-        "heading": "Validate local files"
+        "noHorizontalOverflow": true,
+        "heading": "Synthetic import workflow"
       },
       {
         "route": "readiness",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Readiness & health"
       },
       {
         "route": "offline",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Offline simulator"
       },
       {
         "route": "audit",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Append-only audit"
       },
       {
         "route": "customers",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Customer references"
       },
       {
         "route": "memberships",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Entitlements"
       },
       {
         "route": "giftcards",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Gift-card liability ledger"
       },
       {
         "route": "inventory",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Yellow Dog mirror"
       },
       {
         "route": "staff",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Coverage and work"
       }
     ],
@@ -629,216 +667,561 @@
         "route": "today",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Today at Dig n Zone"
       },
       {
         "route": "sell",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Sell admission"
       },
       {
         "route": "admissions",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Admissions"
       },
       {
         "route": "bookings",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Run sheet"
       },
       {
         "route": "catalog",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Catalog"
       },
       {
         "route": "reports",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Report workspace"
+      },
+      {
+        "route": "finance",
+        "visible": true,
+        "focus": true,
+        "noHorizontalOverflow": true,
+        "heading": "Synthetic finance lifecycle"
       },
       {
         "route": "operations",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Opening readiness"
       },
       {
         "route": "schedule",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Schedule"
       },
       {
         "route": "exceptions",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Exception cases"
       },
       {
         "route": "reconciliation",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Reconciliation"
       },
       {
         "route": "integrations",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Connector boundaries"
       },
       {
         "route": "settings",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Venue configuration"
       },
       {
         "route": "orders",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Orders"
       },
       {
         "route": "imports",
         "visible": true,
         "focus": true,
-        "overflow": true,
-        "heading": "Validate local files"
+        "noHorizontalOverflow": true,
+        "heading": "Synthetic import workflow"
       },
       {
         "route": "readiness",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Readiness & health"
       },
       {
         "route": "offline",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Offline simulator"
       },
       {
         "route": "audit",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Append-only audit"
       },
       {
         "route": "customers",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Customer references"
       },
       {
         "route": "memberships",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Entitlements"
       },
       {
         "route": "giftcards",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Gift-card liability ledger"
       },
       {
         "route": "inventory",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
         "heading": "Yellow Dog mirror"
       },
       {
         "route": "staff",
         "visible": true,
         "focus": true,
-        "overflow": true,
+        "noHorizontalOverflow": true,
+        "heading": "Coverage and work"
+      }
+    ],
+    "1920": [
+      {
+        "route": "today",
+        "visible": true,
+        "focus": true,
+        "noHorizontalOverflow": true,
+        "heading": "Today at Dig n Zone"
+      },
+      {
+        "route": "sell",
+        "visible": true,
+        "focus": true,
+        "noHorizontalOverflow": true,
+        "heading": "Sell admission"
+      },
+      {
+        "route": "admissions",
+        "visible": true,
+        "focus": true,
+        "noHorizontalOverflow": true,
+        "heading": "Admissions"
+      },
+      {
+        "route": "bookings",
+        "visible": true,
+        "focus": true,
+        "noHorizontalOverflow": true,
+        "heading": "Run sheet"
+      },
+      {
+        "route": "catalog",
+        "visible": true,
+        "focus": true,
+        "noHorizontalOverflow": true,
+        "heading": "Catalog"
+      },
+      {
+        "route": "reports",
+        "visible": true,
+        "focus": true,
+        "noHorizontalOverflow": true,
+        "heading": "Report workspace"
+      },
+      {
+        "route": "finance",
+        "visible": true,
+        "focus": true,
+        "noHorizontalOverflow": true,
+        "heading": "Synthetic finance lifecycle"
+      },
+      {
+        "route": "operations",
+        "visible": true,
+        "focus": true,
+        "noHorizontalOverflow": true,
+        "heading": "Opening readiness"
+      },
+      {
+        "route": "schedule",
+        "visible": true,
+        "focus": true,
+        "noHorizontalOverflow": true,
+        "heading": "Schedule"
+      },
+      {
+        "route": "exceptions",
+        "visible": true,
+        "focus": true,
+        "noHorizontalOverflow": true,
+        "heading": "Exception cases"
+      },
+      {
+        "route": "reconciliation",
+        "visible": true,
+        "focus": true,
+        "noHorizontalOverflow": true,
+        "heading": "Reconciliation"
+      },
+      {
+        "route": "integrations",
+        "visible": true,
+        "focus": true,
+        "noHorizontalOverflow": true,
+        "heading": "Connector boundaries"
+      },
+      {
+        "route": "settings",
+        "visible": true,
+        "focus": true,
+        "noHorizontalOverflow": true,
+        "heading": "Venue configuration"
+      },
+      {
+        "route": "orders",
+        "visible": true,
+        "focus": true,
+        "noHorizontalOverflow": true,
+        "heading": "Orders"
+      },
+      {
+        "route": "imports",
+        "visible": true,
+        "focus": true,
+        "noHorizontalOverflow": true,
+        "heading": "Synthetic import workflow"
+      },
+      {
+        "route": "readiness",
+        "visible": true,
+        "focus": true,
+        "noHorizontalOverflow": true,
+        "heading": "Readiness & health"
+      },
+      {
+        "route": "offline",
+        "visible": true,
+        "focus": true,
+        "noHorizontalOverflow": true,
+        "heading": "Offline simulator"
+      },
+      {
+        "route": "audit",
+        "visible": true,
+        "focus": true,
+        "noHorizontalOverflow": true,
+        "heading": "Append-only audit"
+      },
+      {
+        "route": "customers",
+        "visible": true,
+        "focus": true,
+        "noHorizontalOverflow": true,
+        "heading": "Customer references"
+      },
+      {
+        "route": "memberships",
+        "visible": true,
+        "focus": true,
+        "noHorizontalOverflow": true,
+        "heading": "Entitlements"
+      },
+      {
+        "route": "giftcards",
+        "visible": true,
+        "focus": true,
+        "noHorizontalOverflow": true,
+        "heading": "Gift-card liability ledger"
+      },
+      {
+        "route": "inventory",
+        "visible": true,
+        "focus": true,
+        "noHorizontalOverflow": true,
+        "heading": "Yellow Dog mirror"
+      },
+      {
+        "route": "staff",
+        "visible": true,
+        "focus": true,
+        "noHorizontalOverflow": true,
         "heading": "Coverage and work"
       }
     ]
   },
-  "flows": [
-    "authenticated",
-    "invalid quantity blocked",
-    "hold created",
-    "order and signed ticket created",
-    "accepted and duplicate admission states",
-    "export queued without download",
-    "connector retry rendered",
-    "exception queue updated",
-    "logout revoked and returned focus"
-  ],
-  "consoleErrors": [],
-  "requests": [
-    "http://127.0.0.1:43127/api/auth/status",
-    "http://127.0.0.1:43127/api/auth/login",
-    "http://127.0.0.1:43127/api/auth/status",
-    "http://127.0.0.1:43127/api/state",
-    "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNSIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBmaWxsPSJXaW5kb3dUZXh0IiBkPSJNMjAgM2gtMVYxaC0ydjJIN1YxSDV2Mkg0Yy0xLjEgMC0yIC45LTIgMnYxNmMwIDEuMS45IDIgMiAyaDE2YzEuMSAwIDItLjkgMi0yVjVjMC0xLjEtLjktMi0yLTJ6bTAgMThINFY4aDE2djEzeiIvPjxwYXRoIGZpbGw9Im5vbmUiIGQ9Ik0wIDBoMjR2MjRIMHoiLz48L3N2Zz4=",
-    "http://127.0.0.1:43127/api/holds",
-    "http://127.0.0.1:43127/api/orders",
-    "http://127.0.0.1:43127/api/checkins",
-    "http://127.0.0.1:43127/api/checkins",
-    "http://127.0.0.1:43127/api/export-jobs",
-    "http://127.0.0.1:43127/api/connectors/yellowDog/simulate",
-    "http://127.0.0.1:43127/api/connectors/yellowDog/simulate",
-    "http://127.0.0.1:43127/api/auth/logout",
-    "http://127.0.0.1:43127/api/auth/status"
-  ],
-  "expectedConflict": "Duplicate check-in produced the expected HTTP 409 and rendered DUPLICATE state",
-  "externalRequests": [],
-  "downloads": 0,
+  "routeCount": 23,
+  "viewportRouteChecks": 138,
   "allRoutesPass": true,
-  "stateChecks": [
+  "workflows": {
+    "commerce": {
+      "invalid": {
+        "focus": true,
+        "valid": false
+      },
+      "before": 0,
+      "after": 1,
+      "holdId": "b9e75fb0-c40c-403b-90ca-52cb62c093fd",
+      "orders": 1,
+      "paid": true,
+      "status": "Order confirmed locally. Paid. Provider calls: 0."
+    },
+    "admissions": {
+      "accepted": "ACCEPTED: server-validated local admission.",
+      "duplicate": "DUPLICATE: duplicate or denied admission.",
+      "attempts": 2
+    },
+    "bookingOrders": {
+      "booking": {
+        "label": "Calendar view · 1 booking(s)",
+        "drawer": "Booking 3ABEC2C0-32ECreatedImmutable price snapshot $25.00Capacity confirmed1 admission(s)PaymentPaidCONFIRMEDVersion 3 · process-localCancel synthetic booking",
+        "open": true
+      },
+      "orderDrawer": "Order 3ABEC2C0-32ECreatedImmutable price snapshot $25.00Capacity confirmed1 admission(s)PaymentPaidCONFIRMEDVersion 3 · process-localCancel synthetic booking"
+    },
+    "reports": {
+      "workspace": "Today at a glanceShows tickets sold, expected arrivals, accepted check-ins, refunds, remaining capacity, and exceptions for one service date.Definition: service_date, tickets_sold, expected_arrivals, accepted_checkins, refunded_minor, currency, remaining_capacity, exception_countFreshness: Fresh from process-local state at refresh timeApplied service-date filter: 2030-06-01",
+      "states": [
+        "QUEUED",
+        "RUNNING",
+        "RENDERED",
+        "EXPIRED"
+      ],
+      "downloadable": false,
+      "status": "Export progressed to EXPIRED. Download remains unavailable."
+    },
+    "integration": {
+      "tabCount": 8,
+      "allPanels": true,
+      "keyboard": {
+        "focus": true,
+        "selected": "true"
+      },
+      "events": 1,
+      "reconciliation": "Yellow Dog · ReconciliationCheckpoint none. Local command/acknowledgement reconciliation remains provider-call-free.Scenario history is immutable and local.",
+      "providerCalls": 0
+    },
+    "importApi": {
+      "templates": 10,
+      "formats": [
+        "csv",
+        "json",
+        "ndjson"
+      ],
+      "neutralized": "'=FORMULA",
+      "dry": "DRY_RUN_COMPLETE",
+      "commit": "COMMITTED_SYNTHETIC",
+      "idempotent": true,
+      "hazard": [
+        "REAL_PII_DETECTED"
+      ],
+      "ndErrors": 0,
+      "conflict": "409:Request failed"
+    },
+    "importUi": {
+      "preview": "Rows1Accepted1Rejected0File hash319ebc7102c2f7367d7163f5ba2e5d8b13ba2d3034f8891db83ff88d8c82dfc3Mappingmapping-products-v1-42185040 · version 1RowStable source IDCanonical recordValidation2p-ui{\"sourceId\":\"p-ui\",\"name\":\"Synthetic UI\",\"priceMinor\":3100,\"active\":true}VALIDRow errorsNo row errors.",
+      "dry": "Zero-mutation dry run DRY_RUN_COMPLETE. Provenance, version, hash, and idempotency recorded.",
+      "commit": "Synthetic commit COMMITTED_SYNTHETIC. Provenance, version, hash, and idempotency recorded.",
+      "reconciliation": "ReconciliationSource 1 = accepted 1 + rejected 0. Committed 1. Balanced: true. Provider calls: 0.",
+      "history": "JobEntityModeStatusProvenanceVersionHashRowsAcceptedRejectedimport-0001productsDRY_RUNDRY RUN COMPLETEbrowser-csv156A2D5E5DAE1110import-0002productsCOMMITCOMMITTED SYNTHETICbrowser-csv156A2D5E5DAE1110import-0003productsDRY_RUNDRY RUN COMPLETEui-browser-flow1319EBC7102C2110import-0004productsCOMMITCOMMITTED SYNTHETICui-browser-flow1319EBC7102C2110"
+    },
+    "mutations": {
+      "productIdempotent": true,
+      "pConflict": 409,
+      "sessionIdempotent": true,
+      "sConflict": 409,
+      "blockIdempotent": true,
+      "capacityProtection": 409
+    },
+    "finance": {
+      "before": 0,
+      "failed": {
+        "status": "Refund failed with no partial mutation: Request failed",
+        "count": 0
+      },
+      "success": {
+        "status": "Refund refund-0001 recorded atomically in integer minor units. Provider calls: 0.",
+        "count": 1
+      },
+      "afterDuplicate": 1,
+      "providerCalls": 0
+    },
+    "states": [
+      {
+        "state": "loading",
+        "visible": true,
+        "text": "LoadingLocal state is being refreshed and announced."
+      },
+      {
+        "state": "empty",
+        "visible": true,
+        "text": "EmptyNo queued synchronization work."
+      },
+      {
+        "state": "error",
+        "visible": true,
+        "text": "ErrorThe request failed without mutation; retry safely."
+      },
+      {
+        "state": "stale",
+        "visible": true,
+        "text": "StaleInventory freshness needs manager review."
+      },
+      {
+        "state": "access-denied",
+        "visible": true,
+        "text": "Access deniedLive actions require production identity and are unavailable."
+      }
+    ],
+    "logout": {
+      "loginVisible": true,
+      "focus": true
+    }
+  },
+  "consoleErrors": [],
+  "expectedNetworkErrors": [
     {
-      "state": "loading",
-      "visible": true,
-      "text": "LoadingLocal state is being refreshed and announced."
+      "url": "http://127.0.0.1:43131/api/auth/login",
+      "text": "Failed to load resource: the server responded with a status of 400 (Bad Request)"
     },
     {
-      "state": "empty",
-      "visible": true,
-      "text": "EmptyNo queued synchronization work."
+      "url": "http://127.0.0.1:43131/api/checkins",
+      "text": "Failed to load resource: the server responded with a status of 409 (Conflict)"
     },
     {
-      "state": "error",
-      "visible": true,
-      "text": "ErrorThe request failed without mutation; retry safely."
+      "url": "http://127.0.0.1:43131/api/import/jobs",
+      "text": "Failed to load resource: the server responded with a status of 409 (Conflict)"
     },
     {
-      "state": "stale",
-      "visible": true,
-      "text": "StaleInventory freshness needs manager review."
+      "url": "http://127.0.0.1:43131/api/products",
+      "text": "Failed to load resource: the server responded with a status of 409 (Conflict)"
     },
     {
-      "state": "access-denied",
-      "visible": true,
-      "text": "Access deniedLive actions require production identity and are unavailable."
+      "url": "http://127.0.0.1:43131/api/sessions",
+      "text": "Failed to load resource: the server responded with a status of 409 (Conflict)"
+    },
+    {
+      "url": "http://127.0.0.1:43131/api/capacity-blocks",
+      "text": "Failed to load resource: the server responded with a status of 409 (Conflict)"
+    },
+    {
+      "url": "http://127.0.0.1:43131/api/refunds",
+      "text": "Failed to load resource: the server responded with a status of 400 (Bad Request)"
     }
   ],
-  "finalLayoutRetest": "Passed after final state-handling UI addition"
+  "requests": [
+    "http://127.0.0.1:43131/",
+    "http://127.0.0.1:43131/styles.css",
+    "http://127.0.0.1:43131/app.js",
+    "http://127.0.0.1:43131/api/auth/status",
+    "http://127.0.0.1:43131/api/auth/login",
+    "http://127.0.0.1:43131/api/auth/login",
+    "http://127.0.0.1:43131/api/auth/status",
+    "http://127.0.0.1:43131/api/state",
+    "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNSIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBmaWxsPSJXaW5kb3dUZXh0IiBkPSJNMjAgM2gtMVYxaC0ydjJIN1YxSDV2Mkg0Yy0xLjEgMC0yIC45LTIgMnYxNmMwIDEuMS45IDIgMiAyaDE2YzEuMSAwIDItLjkgMi0yVjVjMC0xLjEtLjktMi0yLTJ6bTAgMThINFY4aDE2djEzeiIvPjxwYXRoIGZpbGw9Im5vbmUiIGQ9Ik0wIDBoMjR2MjRIMHoiLz48L3N2Zz4=",
+    "http://127.0.0.1:43131/api/holds",
+    "http://127.0.0.1:43131/api/orders",
+    "http://127.0.0.1:43131/api/checkins",
+    "http://127.0.0.1:43131/api/checkins",
+    "http://127.0.0.1:43131/api/export-jobs",
+    "http://127.0.0.1:43131/api/export-jobs/export-0001/progress",
+    "http://127.0.0.1:43131/api/export-jobs/export-0001/progress",
+    "http://127.0.0.1:43131/api/export-jobs/export-0001/progress",
+    "http://127.0.0.1:43131/api/connectors/yellowDog/simulate",
+    "http://127.0.0.1:43131/api/import/uploads",
+    "http://127.0.0.1:43131/api/import/uploads/upload-0001/detect",
+    "http://127.0.0.1:43131/api/import/mappings",
+    "http://127.0.0.1:43131/api/import/uploads/upload-0001/preview?mappingId=mapping-products-v2-42185040",
+    "http://127.0.0.1:43131/api/import/jobs",
+    "http://127.0.0.1:43131/api/import/jobs",
+    "http://127.0.0.1:43131/api/import/jobs",
+    "http://127.0.0.1:43131/api/import/uploads",
+    "http://127.0.0.1:43131/api/import/uploads/upload-0002/detect",
+    "http://127.0.0.1:43131/api/import/mappings",
+    "http://127.0.0.1:43131/api/import/uploads/upload-0002/validate",
+    "http://127.0.0.1:43131/api/import/uploads",
+    "http://127.0.0.1:43131/api/import/uploads/upload-0003/detect",
+    "http://127.0.0.1:43131/api/import/mappings",
+    "http://127.0.0.1:43131/api/import/uploads/upload-0003/validate",
+    "http://127.0.0.1:43131/api/import/uploads",
+    "http://127.0.0.1:43131/api/import/uploads/upload-0004/detect",
+    "http://127.0.0.1:43131/api/import/mappings",
+    "http://127.0.0.1:43131/api/import/jobs",
+    "http://127.0.0.1:43131/api/import/templates",
+    "http://127.0.0.1:43131/api/import/uploads",
+    "http://127.0.0.1:43131/api/import/uploads/upload-0005/detect",
+    "http://127.0.0.1:43131/api/import/mappings",
+    "http://127.0.0.1:43131/api/import/uploads/upload-0005/validate",
+    "http://127.0.0.1:43131/api/import/uploads/upload-0005/preview?mappingId=mapping-products-v1-42185040",
+    "http://127.0.0.1:43131/api/import/uploads/upload-0005/errors?mappingId=mapping-products-v1-42185040",
+    "http://127.0.0.1:43131/api/import/jobs",
+    "http://127.0.0.1:43131/api/import/jobs/import-0003/reconciliation",
+    "http://127.0.0.1:43131/api/import/jobs",
+    "http://127.0.0.1:43131/api/import/jobs/import-0004/reconciliation",
+    "http://127.0.0.1:43131/api/products",
+    "http://127.0.0.1:43131/api/products",
+    "http://127.0.0.1:43131/api/products",
+    "http://127.0.0.1:43131/api/sessions",
+    "http://127.0.0.1:43131/api/sessions",
+    "http://127.0.0.1:43131/api/sessions",
+    "http://127.0.0.1:43131/api/capacity-blocks",
+    "http://127.0.0.1:43131/api/capacity-blocks",
+    "http://127.0.0.1:43131/api/capacity-blocks",
+    "http://127.0.0.1:43131/api/refunds",
+    "http://127.0.0.1:43131/api/refunds",
+    "http://127.0.0.1:43131/api/refunds",
+    "http://127.0.0.1:43131/api/auth/logout",
+    "http://127.0.0.1:43131/api/auth/status"
+  ],
+  "externalRequests": [],
+  "downloads": 0,
+  "zeroProviderCalls": true,
+  "expectedConflicts": [
+    "failed login 400",
+    "duplicate check-in 409",
+    "stale product/session versions 409",
+    "capacity over-block 409",
+    "import provenance/hash collision 409",
+    "injected refund failure 400"
+  ],
+  "browser": "Installed Google Chrome headless via CDP"
 }

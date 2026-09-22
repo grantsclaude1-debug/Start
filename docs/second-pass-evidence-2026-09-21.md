@@ -50,8 +50,9 @@ This evidence covers the binding requirements in [Implementation acceptance — 
 
 - capacity floor, final-unit contention, and expiry/consume races;
 - idempotency mismatch behavior;
-- integer-only money;
+- integer-only money, paid-fixture refunds, refund idempotency, and injected refund atomicity;
 - injected checkout atomicity;
+- product, session, and capacity-block mutations with expected-version conflicts, idempotency, and capacity protection;
 - gate authentication and anonymous/authenticated API boundaries;
 - malformed JSON, wrong content type, oversized body, import abuse, provenance collision, dry-run zero mutation, atomic commit, reconciliation, and deterministic history;
 - formula neutralization;
@@ -65,12 +66,13 @@ This evidence covers the binding requirements in [Implementation acceptance — 
 
 The exact machine-readable result is [rendered-verification-2026-09-21.json](rendered-verification-2026-09-21.json).
 
-- Headless installed Chrome rendered all 22 authenticated views at 320, 375, 768, 1024, and 1440 px: 110 route/viewport checks.
+- Installed Google Chrome rendered all 23 authenticated views at 320, 375, 768, 1024, 1440, and 1920 px: 138 route/viewport checks.
 - Every check confirmed the route was visible, heading focus moved correctly, and document width did not overflow the viewport.
-- Exercised authentication, native invalid-quantity feedback, hold creation, local order/ticket issuance, accepted and duplicate admissions, export queueing, connector retry, exception creation, and logout focus/revocation.
+- Exercised failed/successful authentication and logout; native invalid-quantity feedback; double-submit prevention; paid local checkout; booking calendar/search/detail; order filter/detail; accepted and duplicate admissions; report definitions/freshness/filter and `QUEUED → RUNNING → RENDERED → EXPIRED` export progression; all eight integration tabs, keyboard tab movement, connector retry/history/reconciliation; operations states; and finance/refund failure, success, and idempotency.
+- Exercised all ten Import Center templates in the rendered selector; CSV, JSON, and NDJSON detection; explicit `IGNORE`, transforms, canonical preview, row errors, dry run, synthetic commit, reconciliation, deterministic history, idempotency, formula neutralization, PII rejection, and provenance/hash collision handling.
+- Exercised product, session, and capacity-block mutation success, duplicate idempotency, stale-version conflicts, and capacity over-block rejection.
 - Rendered and verified explicit loading, empty, error, stale, and access-denied states after the final layout change.
-- The duplicate admission intentionally returned HTTP 409 and rendered the explicit duplicate state.
-- Final console errors: 0. External/provider requests: 0. Downloads: 0. Observed requests: 14, all loopback same-origin (plus a browser-generated inline `data:` date-control icon, excluded as neither network nor external traffic).
+- Final JavaScript/runtime console errors: 0. Seven expected browser network-log entries corresponded exactly to the deliberately exercised 400/409 failure paths. External/provider requests: 0. Downloads: 0. Observed requests: 62, all loopback same-origin or inline `data:` UI resources.
 
 ## Remaining production blockers
 
