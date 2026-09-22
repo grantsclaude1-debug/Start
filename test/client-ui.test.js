@@ -64,11 +64,14 @@ test('strict style CSP has no inline style attributes to block', () => {
   assert.match(styles, /\.bars i:nth-child\(6\)\{height:30%\}/);
 });
 
-test('import center parses local files and only creates dry-run jobs', () => {
+test('import center parses bounded local files and supports the full synthetic upload workflow', () => {
   assert.match(page, /type="file"/);
   assert.match(script, /await file\.text\(\)/);
-  assert.match(script, /\/api\/imports\/preview/);
-  assert.match(script, /dryRun:true/);
+  assert.match(script, /\/api\/import\/uploads/);
+  assert.match(script, /\/api\/import\/mappings/);
+  assert.match(script, /DRY_RUN/);
+  assert.match(script, /COMMIT/);
+  assert.match(script, /reconciliation/);
 });
 
 test('safety and durability boundaries remain persistent', () => {

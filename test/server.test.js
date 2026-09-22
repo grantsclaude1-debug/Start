@@ -120,7 +120,9 @@ test('API enforces JSON type, body limit, same-origin CSRF, atomic holds, orders
   const order = await request('/api/orders', { method: 'POST', body: { holdId: first.data.hold.id, productId: 'timed-demo' }, headers: { ...common, 'idempotency-key': 'order-1' } });
   assert.equal(order.status, 201);
   assert.equal(order.data.order.status, 'CONFIRMED');
-  assert.equal(order.data.payment.status, 'DISABLED_PLACEHOLDER');
+  assert.equal(order.data.payment.status, 'STORED_FOR_AUTHORIZATION');
+  assert.equal(order.data.payment.language, 'Stored for authorization — not paid');
+  assert.equal(order.data.payment.providerCalls, 0);
   assert.equal(order.data.ticket.scannerCompatible, false);
   assert.equal('token' in order.data.ticket, false);
   assert.equal(order.data.state.capacity.confirmed, 10);
@@ -131,6 +133,21 @@ test('API enforces JSON type, body limit, same-origin CSRF, atomic holds, orders
   const replay = await request('/api/checkins', { method: 'POST', body: { ticketId: order.data.ticket.id }, headers: { ...common, 'idempotency-key': 'scan-1' } });
   assert.equal(accepted.status, 201); assert.equal(accepted.data.result.result, 'ACCEPTED');
   assert.equal(replay.status, 201); assert.deepEqual(replay.data.result, accepted.data.result);
+});
+
+test('mutation APIs enforce versions and idempotency while fake paid refunds remain atomic and provider-free', async () => {
+  const common = { cookie, origin: base, 'x-demo-csrf': csrf };
+  const productBody = { id: 'api-product-mutation', name: 'Synthetic API Pass', type: 'GENERAL_ADMISSION', priceMinor: 321, expectedVersion: 0 };
+  const created = await request('/api/products', { method: 'POST', body: productBody, headers: { ...common, 'idempotency-key': 'product-mutation' } }); assert.equal(created.status, 201); assert.equal(created.data.item.version, 1);
+  const replay = await request('/api/products', { method: 'POST', body: productBody, headers: { ...common, 'idempotency-key': 'product-mutation' } }); assert.deepEqual(replay.data.item, created.data.item);
+  const stale = await request('/api/products', { method: 'POST', body: { ...productBody, name: 'Stale', expectedVersion: 0 }, headers: { ...common, 'idempotency-key': 'product-stale' } }); assert.equal(stale.status, 409);
+  const block = await request('/api/capacity-blocks', { method: 'POST', body: { id: 'api-overbook', quantity: 3, reason: 'Would make capacity negative', expectedVersion: 0 }, headers: { ...common, 'idempotency-key': 'block-overbook' } }); assert.equal(block.status, 409);
+  const hold = await request('/api/holds', { method: 'POST', body: { quantity: 1 }, headers: { ...common, 'idempotency-key': 'paid-hold' } }); assert.equal(hold.status, 201);
+  const order = await request('/api/orders', { method: 'POST', body: { holdId: hold.data.hold.id, productId: 'timed-demo', paymentScenario: 'paid' }, headers: { ...common, 'idempotency-key': 'paid-order' } }); assert.equal(order.data.payment.language, 'Paid'); assert.equal(order.data.payment.providerCalls, 0);
+  const failed = await request('/api/refunds', { method: 'POST', body: { orderId: order.data.order.id, amountMinor: 100, expectedVersion: order.data.order.version, scenario: 'failed' }, headers: { ...common, 'idempotency-key': 'refund-failed' } }); assert.equal(failed.status, 400);
+  const before = await request('/api/refunds', { headers: { cookie } }); assert.equal(before.data.items.length, 0);
+  const refunded = await request('/api/refunds', { method: 'POST', body: { orderId: order.data.order.id, amountMinor: 100, expectedVersion: order.data.order.version, scenario: 'refunded' }, headers: { ...common, 'idempotency-key': 'refund-success' } }); assert.equal(refunded.status, 201); assert.equal(refunded.data.refund.amountMinor, 100); assert.equal(refunded.data.refund.providerCalls, 0);
+  const refundReplay = await request('/api/refunds', { method: 'POST', body: { orderId: order.data.order.id, amountMinor: 100, expectedVersion: order.data.order.version, scenario: 'refunded' }, headers: { ...common, 'idempotency-key': 'refund-success' } }); assert.deepEqual(refundReplay.data.refund, refunded.data.refund);
 });
 
 test('authenticated report downloads are deterministic CSV/JSON and unknown static paths stay closed', async () => {

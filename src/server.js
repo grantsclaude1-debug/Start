@@ -15,6 +15,7 @@ import { GiftCardLedger } from './domain/gift-card-ledger.js';
 import { ImportCenter } from './imports/import-center.js';
 import { DomainError } from './errors.js';
 import { DomainEventLog, ExceptionCaseStore } from './domain/operations.js';
+import { VersionedVenueStore, FinanceService } from './domain/admin.js';
 
 const PUBLIC = new URL('../public/', import.meta.url);
 const STATIC = new Map([
@@ -109,7 +110,12 @@ function createState({ now = () => Date.now() } = {}) {
   const exceptions = new ExceptionCaseStore({ now: () => new Date(now()).toISOString(), events });
   exceptions.open({ type: 'READINESS', sourceType: 'Task', sourceId: 'TASK-SYN-001', severity: 'ATTENTION', summary: 'Opening readiness walk remains in progress.' });
   const exports = new ExportJobStore({ now: () => new Date(now()).toISOString() });
-  return { holds, pool, tokens, admissions, outbox, mirror, giftCards, connectors, imports: new ImportCenter(), events, exceptions, exports, orders: [], tickets: [], saleQueue: [], createdAt: new Date(now()).toISOString(), now };
+  const venue = new VersionedVenueStore({ products: PRODUCTS.map((product) => ({ ...product, tenantId: 'tenant-demo', venueId: 'venue-demo', currency: 'USD', status: 'ACTIVE', version: 1 })), sessions: [
+    { id: 'session-demo', productId: 'timed-demo', tenantId: 'tenant-demo', venueId: 'venue-demo', capacityPoolId: 'pool-demo', startsAt: '2030-06-01T14:00:00.000Z', endsAt: '2030-06-01T15:30:00.000Z', status: 'ON_SALE', version: 1, label: '10:00 AM Synthetic Session' },
+    { id: 'session-demo-2', productId: 'timed-demo', tenantId: 'tenant-demo', venueId: 'venue-demo', capacityPoolId: 'pool-demo', startsAt: '2030-06-01T16:00:00.000Z', endsAt: '2030-06-01T17:30:00.000Z', status: 'LIMITED', version: 1, label: '12:00 PM Synthetic Session' },
+  ], capacityBlocks: [{ id: 'block-maintenance-demo', poolId: 'pool-demo', quantity: 2, reason: 'Synthetic maintenance buffer', status: 'ACTIVE', startsAt: '2030-06-01T00:00:00.000Z', endsAt: '2030-06-02T00:00:00.000Z', version: 1 }], events });
+  const finance = new FinanceService({ events, now: () => new Date(now()).toISOString() });
+  return { holds, pool, tokens, admissions, outbox, mirror, giftCards, connectors, imports: new ImportCenter(), events, exceptions, exports, venue, finance, cancellationKeys: new Map(), orders: [], tickets: [], saleQueue: [], createdAt: new Date(now()).toISOString(), now };
 }
 
 function csrfFor(token, secret) { return createHmac('sha256', secret).update(`csrf:${token}`).digest('base64url'); }
@@ -125,20 +131,17 @@ function snapshot(state, csrf) {
     memberships: [{ id: 'MEM-SYN-001', reference: 'Synthetic member A', plan: 'Builder Pass', status: 'ACTIVE_SYNTHETIC', renews: false }],
     staff: [{ id: 'ROLE-SYN-OPS', name: 'Floor lead role', coverage: '09:00–17:00', person: null }],
     tasks: [{ id: 'TASK-SYN-001', title: 'Complete opening readiness walk', status: 'IN_PROGRESS', ownerRole: 'Floor lead role' }],
-    schedule: [
-      { id: 'session-demo', startsAt: '2030-06-01T14:00:00.000Z', label: '10:00 AM Synthetic Session', product: 'Timed Adventure — Synthetic', status: 'ON_SALE' },
-      { id: 'session-demo-2', startsAt: '2030-06-01T16:00:00.000Z', label: '12:00 PM Synthetic Session', product: 'Timed Adventure — Synthetic', status: 'LIMITED' },
-    ],
+    schedule: state.venue.list('sessions').map((session) => ({ ...session, label: session.label ?? new Date(session.startsAt).toISOString(), product: state.venue.list('products').find((product) => product.id === session.productId)?.name ?? session.productId })),
   };
   return {
     synthetic: true,
     warning: 'NON-PRODUCTION / SYNTHETIC DATA ONLY',
     persistenceWarning: 'Per-instance, ephemeral serverless preview state. Unsuitable for real sales, capacity, tickets, or check-in.',
     csrf,
-    products: PRODUCTS,
+    products: state.venue.list('products'),
     session: { id: 'session-demo', label: '10:00 AM Synthetic Session', startsAt: '2030-06-01T14:00:00.000Z' },
     capacity: { total: state.pool.capacityTotal, blocked: state.pool.activeBlocks, held: state.pool.activeHolds, confirmed: state.pool.confirmed, available: state.pool.available, version: state.pool.version },
-    capacityBlocks: [{ id: 'block-maintenance-demo', poolId: state.pool.id, quantity: state.pool.activeBlocks, reason: 'Synthetic maintenance buffer', status: 'ACTIVE', startsAt: '2030-06-01T00:00:00.000Z', endsAt: '2030-06-02T00:00:00.000Z' }],
+    capacityBlocks: state.venue.list('capacityBlocks'),
     holds: [...state.holds.holds.values()].map((hold) => ({ ...hold })),
     orders: state.orders,
     tickets: state.tickets.map(({ token: _token, ...ticket }) => ticket),
@@ -150,7 +153,8 @@ function snapshot(state, csrf) {
       migration: { mode: 'read-only synthetic preview', writeback: false },
       payment: { mode: 'disabled placeholder', collection: false },
     },
-    reports: Object.entries(REPORT_DEFINITIONS).map(([id, report]) => ({ id, title: report.title, purpose: report.purpose })),
+    reports: Object.entries(REPORT_DEFINITIONS).map(([id, report]) => ({ id, title: report.title, purpose: report.purpose, columns: report.columns, freshness: 'Fresh from process-local state at refresh time' })),
+    refunds: state.finance.list(),
     ...syntheticRecords,
     giftCards: { cards: state.giftCards.cards(), entries: state.giftCards.entries(), chainValid: state.giftCards.verify() },
     importJobs: state.imports.history(),
@@ -208,9 +212,10 @@ export function createDemoRequestHandler({ env = process.env, now = () => Date.n
       const context = authContext(req, gate, gateConfig.sessionSecret);
       if (UNSAFE.has(req.method) && (!sameOrigin(req, { trustProxy, externalOrigin }) || req.headers['x-demo-csrf'] !== context.csrf)) throw new DomainError('REQUEST_REJECTED');
       if (url.pathname === '/api/state' && req.method === 'GET') return send(res, 200, snapshot(state, context.csrf));
-      if (url.pathname === '/api/products' && req.method === 'GET') return send(res, 200, { items: PRODUCTS });
-      if (url.pathname === '/api/sessions' && req.method === 'GET') return send(res, 200, { items: snapshot(state, context.csrf).schedule });
-      if (url.pathname === '/api/capacity-blocks' && req.method === 'GET') return send(res, 200, { items: snapshot(state, context.csrf).capacityBlocks });
+      if (url.pathname === '/api/products' && req.method === 'GET') return send(res, 200, { items: state.venue.list('products') });
+      if (url.pathname === '/api/sessions' && req.method === 'GET') return send(res, 200, { items: state.venue.list('sessions') });
+      if (url.pathname === '/api/capacity-blocks' && req.method === 'GET') return send(res, 200, { items: state.venue.list('capacityBlocks') });
+      if (url.pathname === '/api/refunds' && req.method === 'GET') return send(res, 200, { items: state.finance.list(), providerCalls: 0 });
       if (url.pathname === '/api/holds' && req.method === 'GET') return send(res, 200, { items: [...state.holds.holds.values()].map((hold) => ({ ...hold })) });
       if (url.pathname === '/api/orders' && req.method === 'GET') return send(res, 200, { items: state.orders });
       if (url.pathname === '/api/tickets' && req.method === 'GET') return send(res, 200, { items: snapshot(state, context.csrf).tickets });
@@ -271,9 +276,29 @@ export function createDemoRequestHandler({ env = process.env, now = () => Date.n
       if (url.pathname === '/api/export-jobs' && req.method === 'POST') {
         const body = await readJson(req);
         if (!REPORT_DEFINITIONS[body.reportId]) throw new DomainError('VALIDATION_FAILED');
-        const job = state.exports.create({ reportId: body.reportId, format: body.format ?? 'csv', idempotencyKey: String(req.headers['idempotency-key'] ?? '') });
+        const job = state.exports.create({ reportId: body.reportId, format: body.format ?? 'csv', filters: body.filters ?? {}, idempotencyKey: String(req.headers['idempotency-key'] ?? '') });
         state.events.append({ type: 'EXPORT_JOB_QUEUED', aggregateType: 'ExportJob', aggregateId: job.id, payload: { reportId: job.reportId, downloadable: false } });
         return send(res, 202, { job, state: snapshot(state, context.csrf) });
+      }
+      if (['/api/products','/api/sessions','/api/capacity-blocks'].includes(url.pathname) && req.method === 'POST') {
+        const body = await readJson(req); const kind = ({ '/api/products': 'products', '/api/sessions': 'sessions', '/api/capacity-blocks': 'capacityBlocks' })[url.pathname];
+        const value = state.venue.mutate(kind, body, String(req.headers['idempotency-key'] ?? ''), state.pool);
+        return send(res, 201, { item: value, state: snapshot(state, context.csrf) });
+      }
+      if (url.pathname === '/api/refunds' && req.method === 'POST') {
+        const body = await readJson(req); const order = state.orders.find((item) => item.id === body.orderId);
+        if (!order || order.payment?.paid !== true) throw new DomainError('REFUND_NOT_ALLOWED');
+        const refund = state.finance.refund({ order, amountMinor: body.amountMinor, expectedVersion: body.expectedVersion, scenario: body.scenario, injectFailure: body.injectFailure, idempotencyKey: String(req.headers['idempotency-key'] ?? '') });
+        return send(res, 201, { refund, state: snapshot(state, context.csrf) });
+      }
+      if (url.pathname === '/api/orders/cancel' && req.method === 'POST') {
+        const body = await readJson(req); const index = state.orders.findIndex((item) => item.id === body.orderId); const order = state.orders[index];
+        if (!order) throw new DomainError('NOT_FOUND'); const key = String(req.headers['idempotency-key'] ?? ''); if (!key) throw new DomainError('VALIDATION_FAILED');
+        const fingerprint = JSON.stringify(body); const prior = state.cancellationKeys.get(key); if (prior) { if (prior.fingerprint !== fingerprint) throw new DomainError('IDEMPOTENCY_MISMATCH'); return send(res, 200, { order: prior.order, state: snapshot(state, context.csrf) }); }
+        if (order.version !== body.expectedVersion) throw new DomainError('VERSION_CONFLICT');
+        const canceled = Object.freeze({ ...order, status: 'CANCELED', version: order.version + 1, cancellation: { reason: String(body.reason ?? 'Synthetic operator cancellation'), providerCalls: 0 } });
+        state.orders[index] = canceled; state.cancellationKeys.set(key, { fingerprint, order: canceled }); state.events.append({ type: 'ORDER_CANCELED', aggregateType: 'Order', aggregateId: order.id, payload: { expectedVersion: body.expectedVersion, providerCalls: 0 } });
+        return send(res, 200, { order: canceled, state: snapshot(state, context.csrf) });
       }
       if (url.pathname === '/api/auth/logout' && req.method === 'POST') {
         gate.revoke(context.token);
@@ -290,20 +315,20 @@ export function createDemoRequestHandler({ env = process.env, now = () => Date.n
       if (url.pathname === '/api/orders' && req.method === 'POST') {
         const body = await readJson(req); const hold = state.holds.holds.get(body.holdId);
         if (!hold || hold.status !== 'ACTIVE') throw new DomainError('VALIDATION_FAILED');
-        const product = PRODUCTS.find((item) => item.id === body.productId);
+        const product = state.venue.list('products').find((item) => item.id === body.productId);
         if (!product) throw new DomainError('VALIDATION_FAILED');
         const order = createOrder({ id: randomUUID(), tenantId: 'tenant-demo', venueId: 'venue-demo', currency: 'USD', channel: 'SYNTHETIC_DEMO', lines: [{ productId: product.id, quantity: hold.quantity, unitAmountMinor: product.priceMinor }] });
         transitionOrder(order, 'PENDING_PAYMENT', 1); transitionOrder(order, 'CONFIRMED', 2);
         state.holds.transition({ holdId: hold.id, action: 'CONSUME', expectedVersion: hold.version, idempotencyKey: String(req.headers['idempotency-key'] ?? ''), orderId: order.id });
         const ticketId = randomUUID(); const issued = state.tokens.issue({ ticketId, venueId: 'venue-demo', sessionId: 'session-demo', validFrom: '2020-01-01T00:00:00Z', validUntil: '2100-01-01T00:00:00Z', maxEntries: hold.quantity });
-        state.admissions.add(issued.ticket); state.orders.push(Object.freeze({ ...order }));
+        state.admissions.add(issued.ticket); const payment = body.paymentScenario === 'paid' ? { status: 'PAID', paid: true, language: 'Paid', providerCalls: 0 } : { status: 'STORED_FOR_AUTHORIZATION', paid: false, language: 'Stored for authorization — not paid', providerCalls: 0 }; state.orders.push(Object.freeze({ ...order, payment }));
         const publicTicket = Object.freeze({ id: ticketId, orderId: order.id, maxEntries: hold.quantity, displayCode: `SYN-${ticketId.slice(0, 8).toUpperCase()}`, scannerCompatible: false });
         state.tickets.push(Object.freeze({ ...publicTicket, token: issued.token }));
         state.outbox.append({ eventType: 'synthetic.order.confirmed.v1', aggregateType: 'Order', aggregateId: order.id, aggregateVersion: order.version, payload: { totalMinor: order.totalMinor, synthetic: true }, idempotencyKey: `outbox-${order.id}` });
         state.saleQueue.push({ id: order.id, status: 'LOCAL_ONLY', destination: 'Yellow Dog disabled' });
         state.events.append({ type: 'ORDER_CONFIRMED', aggregateType: 'Order', aggregateId: order.id, payload: { totalMinor: order.totalMinor, paymentState: 'STORED_FOR_AUTHORIZATION_NOT_PAID', synthetic: true } });
         state.events.append({ type: 'TICKET_ISSUED', aggregateType: 'Ticket', aggregateId: ticketId, payload: { orderId: order.id, maxEntries: hold.quantity } });
-        return send(res, 201, { order, ticket: publicTicket, payment: { status: 'DISABLED_PLACEHOLDER', authorizationStatus: 'STORED_FOR_AUTHORIZATION', paid: false, language: 'Stored for authorization — not paid', providerCalls: 0 }, state: snapshot(state, context.csrf) });
+        return send(res, 201, { order: state.orders.at(-1), ticket: publicTicket, payment, state: snapshot(state, context.csrf) });
       }
       if (url.pathname === '/api/checkins' && req.method === 'POST') {
         const body = await readJson(req); const ticket = state.tickets.find((item) => item.id === body.ticketId);
@@ -330,7 +355,7 @@ export function createDemoRequestHandler({ env = process.env, now = () => Date.n
         method: req.method,
         path: String(req.url ?? '').split('?')[0],
       });
-      const status = error.code === 'AUTH_REQUIRED' ? 401 : error.code === 'NOT_FOUND' ? 404 : error.code === 'UNSUPPORTED_MEDIA_TYPE' ? 415 : error.code === 'BODY_TOO_LARGE' ? 413 : ['CAPACITY_UNAVAILABLE', 'VERSION_CONFLICT'].includes(error.code) ? 409 : 400;
+      const status = error.code === 'AUTH_REQUIRED' ? 401 : error.code === 'NOT_FOUND' ? 404 : error.code === 'UNSUPPORTED_MEDIA_TYPE' ? 415 : error.code === 'BODY_TOO_LARGE' ? 413 : ['CAPACITY_UNAVAILABLE', 'VERSION_CONFLICT', 'IDEMPOTENCY_MISMATCH', 'IMPORT_PROVENANCE_HASH_CONFLICT'].includes(error.code) ? 409 : 400;
       send(res, status, { error: status === 401 ? 'Authentication required' : 'Request failed' });
     }
   };
