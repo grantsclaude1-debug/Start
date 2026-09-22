@@ -10,6 +10,9 @@ import { AdmissionRegistry, generateTicketSigningKeyPair, TicketTokenService } f
 import { exportReport, REPORT_DEFINITIONS } from './reporting/reports.js';
 import { Outbox } from './offline/outbox.js';
 import { YellowDogInventoryMirror } from './integrations/yellow-dog.js';
+import { ConnectorRegistry } from './integrations/connector-registry.js';
+import { GiftCardLedger } from './domain/gift-card-ledger.js';
+import { ImportCenter } from './imports/import-center.js';
 import { DomainError } from './errors.js';
 
 const PUBLIC = new URL('../public/', import.meta.url);
@@ -97,7 +100,11 @@ function createState({ now = () => Date.now() } = {}) {
     { id: 'yd-hard-hat', name: 'Synthetic Hard Hat', onHand: 12 },
     { id: 'yd-safety-vest', name: 'Synthetic Safety Vest', onHand: 8 },
   ]);
-  return { holds, pool, tokens, admissions, outbox, mirror, orders: [], tickets: [], saleQueue: [], createdAt: new Date(now()).toISOString(), now };
+  const giftCards = new GiftCardLedger();
+  giftCards.append({ cardId: 'GC-SYN-1001', type: 'ISSUED', amountMinor: 7500, idempotencyKey: 'fixture-gift-issue', reason: 'Synthetic opening liability', occurredAt: '2030-06-01T12:00:00.000Z' });
+  giftCards.append({ cardId: 'GC-SYN-1001', type: 'REDEEMED', amountMinor: -1800, idempotencyKey: 'fixture-gift-redeem', reason: 'Synthetic admission redemption', occurredAt: '2030-06-01T13:00:00.000Z' });
+  const connectors = new ConnectorRegistry({ now: () => new Date(now()).toISOString() });
+  return { holds, pool, tokens, admissions, outbox, mirror, giftCards, connectors, imports: new ImportCenter(), orders: [], tickets: [], saleQueue: [], exportJobs: [], audit: [], createdAt: new Date(now()).toISOString(), now };
 }
 
 function csrfFor(token, secret) { return createHmac('sha256', secret).update(`csrf:${token}`).digest('base64url'); }
@@ -108,6 +115,16 @@ function authContext(req, gate, secret) {
   return { token, csrf: csrfFor(token, secret) };
 }
 function snapshot(state, csrf) {
+  const syntheticRecords = {
+    customers: [{ id: 'CUS-SYN-001', reference: 'Synthetic household A', segment: 'Returning', waiverStatus: 'PLACEHOLDER_ONLY', pii: false }],
+    memberships: [{ id: 'MEM-SYN-001', reference: 'Synthetic member A', plan: 'Builder Pass', status: 'ACTIVE_SYNTHETIC', renews: false }],
+    staff: [{ id: 'ROLE-SYN-OPS', name: 'Floor lead role', coverage: '09:00–17:00', person: null }],
+    tasks: [{ id: 'TASK-SYN-001', title: 'Complete opening readiness walk', status: 'IN_PROGRESS', ownerRole: 'Floor lead role' }],
+    schedule: [
+      { id: 'session-demo', startsAt: '2030-06-01T14:00:00.000Z', label: '10:00 AM Synthetic Session', product: 'Timed Adventure — Synthetic', status: 'ON_SALE' },
+      { id: 'session-demo-2', startsAt: '2030-06-01T16:00:00.000Z', label: '12:00 PM Synthetic Session', product: 'Timed Adventure — Synthetic', status: 'LIMITED' },
+    ],
+  };
   return {
     synthetic: true,
     warning: 'NON-PRODUCTION / SYNTHETIC DATA ONLY',
@@ -128,6 +145,22 @@ function snapshot(state, csrf) {
       payment: { mode: 'disabled placeholder', collection: false },
     },
     reports: Object.entries(REPORT_DEFINITIONS).map(([id, report]) => ({ id, title: report.title, purpose: report.purpose })),
+    ...syntheticRecords,
+    giftCards: { cards: state.giftCards.cards(), entries: state.giftCards.entries(), chainValid: state.giftCards.verify() },
+    importJobs: state.imports.history(),
+    connectors: state.connectors.list(),
+    connectorEvents: state.connectors.events(),
+    exportJobs: state.exportJobs,
+    audit: state.audit,
+    summaries: {
+      ticketsSold: state.orders.reduce((sum, order) => sum + order.lines.reduce((lineSum, line) => lineSum + line.quantity, 0), 0),
+      acceptedAdmissions: state.admissions.attempts.filter((attempt) => attempt.result === 'ACCEPTED').length,
+      activeMemberships: syntheticRecords.memberships.filter((membership) => membership.status === 'ACTIVE_SYNTHETIC').length,
+      giftLiabilityMinor: state.giftCards.cards().reduce((sum, card) => sum + card.balanceMinor, 0),
+      inventoryUnits: state.mirror.list('items').reduce((sum, item) => sum + item.onHand, 0),
+      openTasks: syntheticRecords.tasks.filter((task) => task.status !== 'DONE').length,
+      importErrors: state.imports.history().reduce((sum, job) => sum + job.rejected, 0),
+    },
   };
 }
 function reportRows(state, id) {
@@ -166,6 +199,43 @@ export function createDemoRequestHandler({ env = process.env, now = () => Date.n
       const context = authContext(req, gate, gateConfig.sessionSecret);
       if (UNSAFE.has(req.method) && (!sameOrigin(req, { trustProxy, externalOrigin }) || req.headers['x-demo-csrf'] !== context.csrf)) throw new DomainError('REQUEST_REJECTED');
       if (url.pathname === '/api/state' && req.method === 'GET') return send(res, 200, snapshot(state, context.csrf));
+      if (url.pathname === '/api/products' && req.method === 'GET') return send(res, 200, { items: PRODUCTS });
+      if (url.pathname === '/api/sessions' && req.method === 'GET') return send(res, 200, { items: snapshot(state, context.csrf).schedule });
+      if (url.pathname === '/api/orders' && req.method === 'GET') return send(res, 200, { items: state.orders });
+      if (url.pathname === '/api/tickets' && req.method === 'GET') return send(res, 200, { items: snapshot(state, context.csrf).tickets });
+      if (url.pathname === '/api/checkins' && req.method === 'GET') return send(res, 200, { items: state.admissions.attempts });
+      if (url.pathname === '/api/imports' && req.method === 'GET') return send(res, 200, { items: state.imports.history() });
+      if (url.pathname === '/api/connectors' && req.method === 'GET') return send(res, 200, { items: state.connectors.list(), events: state.connectors.events() });
+      if (url.pathname === '/api/gift-cards' && req.method === 'GET') return send(res, 200, { cards: state.giftCards.cards(), entries: state.giftCards.entries(), chainValid: state.giftCards.verify() });
+      if (url.pathname === '/api/imports/preview' && req.method === 'POST') {
+        const body = await readJson(req);
+        return send(res, 200, state.imports.preview({ entity: body.entity, format: body.format, content: body.content, mapping: body.mapping }));
+      }
+      if (url.pathname === '/api/imports/jobs' && req.method === 'POST') {
+        const body = await readJson(req);
+        const job = state.imports.createJob({ entity: body.entity, format: body.format, content: body.content, mapping: body.mapping, dryRun: body.dryRun !== false, idempotencyKey: String(req.headers['idempotency-key'] ?? ''), createdAt: new Date(now()).toISOString() });
+        state.audit.push({ sequence: state.audit.length + 1, type: 'IMPORT_JOB_CREATED', aggregateId: job.id, at: job.createdAt, synthetic: true });
+        return send(res, 201, { job, state: snapshot(state, context.csrf) });
+      }
+      const connectorMatch = url.pathname.match(/^\/api\/connectors\/(roller|stripe|yellowDog|splashRadio)\/simulate$/);
+      if (connectorMatch && req.method === 'POST') {
+        const body = await readJson(req);
+        const connector = state.connectors.run(connectorMatch[1], body.scenario);
+        state.audit.push({ sequence: state.audit.length + 1, type: 'CONNECTOR_SIMULATED', aggregateId: connector.id, at: connector.lastCheckedAt, synthetic: true });
+        return send(res, 200, { connector, state: snapshot(state, context.csrf) });
+      }
+      if (url.pathname === '/api/gift-cards/entries' && req.method === 'POST') {
+        const body = await readJson(req);
+        const entry = state.giftCards.append({ cardId: body.cardId, type: body.type, amountMinor: body.amountMinor, reason: body.reason, idempotencyKey: String(req.headers['idempotency-key'] ?? ''), occurredAt: new Date(now()).toISOString() });
+        state.audit.push({ sequence: state.audit.length + 1, type: 'GIFT_LEDGER_ENTRY_APPENDED', aggregateId: entry.cardId, at: entry.occurredAt, synthetic: true });
+        return send(res, 201, { entry, balanceMinor: state.giftCards.balance(entry.cardId), state: snapshot(state, context.csrf) });
+      }
+      if (url.pathname === '/api/export-jobs' && req.method === 'POST') {
+        const body = await readJson(req);
+        if (!REPORT_DEFINITIONS[body.reportId]) throw new DomainError('VALIDATION_FAILED');
+        const job = Object.freeze({ id: `export-${String(state.exportJobs.length + 1).padStart(4, '0')}`, reportId: body.reportId, status: 'QUEUED', downloadable: false, synthetic: true, createdAt: new Date(now()).toISOString() });
+        state.exportJobs.push(job); return send(res, 202, { job, state: snapshot(state, context.csrf) });
+      }
       if (url.pathname === '/api/auth/logout' && req.method === 'POST') {
         gate.revoke(context.token);
         return send(res, 200, { authenticated: false }, { 'set-cookie': `${COOKIE}=; HttpOnly; SameSite=Strict; Path=/; Max-Age=0${secureCookie ? '; Secure' : ''}` });

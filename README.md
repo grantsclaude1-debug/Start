@@ -47,16 +47,15 @@ This preview does not become durable because it is hosted. Each warm function in
 
 ## What is implemented
 
-- Responsive, keyboard-usable semantic vanilla HTML/CSS/JavaScript UI with persistent **NON-PRODUCTION / SYNTHETIC** warnings.
-- Clickable product/session dashboard showing total, blocked, held, confirmed, and available capacity.
-- Server-side atomic hold validation, idempotency, version checks, expiry rules, and oversell rejection.
-- Sample order flow with integer-minor-unit totals and an explicitly disabled payment provider placeholder.
-- Synthetic signed ticket issuance, a decorative QR-like display that is **not scanner-compatible**, and server-validated idempotent check-in/duplicate handling.
-- Plain-language reports with authenticated CSV and JSON downloads.
-- In-memory hash-chained offline/outbox demonstration.
-- Yellow Dog read-only synthetic inventory mirror and local sales queue display; no delivery or inventory writes.
-- Splash Radio manual-only status; no programmatic action.
-- Migration read-only model; source writeback is prohibited.
+- Responsive WCAG-oriented operator console with desktop rail, mobile bottom navigation, visible focus, reduced-motion and forced-colors rules, and persistent **NON-PRODUCTION / SYNTHETIC** warnings.
+- Today cross-workflow summaries; schedule/calendar capacity; guided sell; orders; signed-ticket admissions; PII-free customer/waiver placeholders; memberships/passes; products; inventory; role-only staff/tasks; reporting; settings; and connector status.
+- Server-side hold validation, idempotency, version checks, expiry rules, and oversell rejection, with integer-minor-unit order totals and an explicitly disabled fake payment provider.
+- Append-only, idempotent, hash-linked gift-card liability ledger with overdraft rejection and immutable projections.
+- Import Center for operator-selected local CSV/JSON: browser file reading, deterministic server validation and mapping, preview, formula neutralization, bounded rows/bytes, dry-run jobs, history, errors, and summaries. Fixtures and examples remain synthetic.
+- Deterministic local connector scenarios for ROLLER read-only migration, Stripe disabled boundaries, Yellow Dog read-only inventory, and Splash Radio manual-only status. Retry/rate-limit, mapping, token-expiry, partial, empty, and healthy states make **zero provider calls**.
+- Synthetic signed ticket issuance and server-validated idempotent accepted/duplicate outcomes. Display codes are deliberately not scanner-compatible.
+- Deterministic report/export-job lifecycle state without initiating a browser download from the UI.
+- In-memory hash-chained offline/outbox demonstration and append-only local audit projection.
 - Exact static-file allowlist, no directory serving, traversal rejection, response security headers, 16 KiB JSON body limit, JSON content-type enforcement, origin/Sec-Fetch checks, and per-session CSRF tokens for mutations.
 
 ## Architecture
@@ -67,7 +66,9 @@ This preview does not become durable because it is hosted. Each warm function in
 - `vercel.json` — Node.js 24 function, static-asset inclusion, and guarded catch-all preview routing.
 - `public/` — accessible semantic UI; it never contains secrets or authoritative mutation logic.
 - `src/auth/` — salted scrypt verifier, in-memory attempt limiter, HMAC-indexed session store, expiry, and revocation.
-- `src/domain/` — products/sessions, capacity and holds, orders, signed tickets, and admissions.
+- `src/domain/` — products/sessions, capacity and holds, orders, signed tickets/admissions, and the append-only gift-card ledger.
+- `src/imports/` — bounded CSV/JSON parsing, field mapping, validation, formula neutralization, deterministic dry-run jobs, and history.
+- `src/integrations/connector-registry.js` — local-only connector state machine with zero provider calls.
 - `src/reporting/` — stable plain-language report definitions and deterministic CSV/JSON artifacts.
 - `src/offline/` — idempotency and append-only hash-chained outbox primitives.
 - `src/integrations/` — Yellow Dog read-only mirror/disabled-by-default queue seam and manual-only Splash Radio seam.

@@ -17,4 +17,10 @@ for (const file of files.filter((path) => ['.js', '.mjs'].includes(extname(path)
 }
 const fixtureText = readFileSync(join(root, 'src/fixtures/non-pii.js'), 'utf8');
 for (const pattern of [/@/, /\b(?:\d[ -]*?){13,19}\b/, /PRIVATE_GATE_VERIFIER\s*=/]) if (pattern.test(fixtureText)) throw new Error('Fixture may contain sensitive data');
-console.log(`PASS check: ${files.filter((path) => ['.js', '.mjs'].includes(extname(path))).length} JS files parsed; zero dependencies; HTTP confined to server/test; external network imports and fixture secrets absent`);
+const shipped = files.filter((path) => ['api', 'src', 'public'].includes(relative(root, path).split('/')[0]));
+for (const file of shipped) {
+  const text = readFileSync(file, 'utf8');
+  if (/sk_(?:live|test)_[A-Za-z0-9]{12,}|(?:api|secret)[_-]?key\s*[:=]\s*['"][^'"]+/i.test(text)) throw new Error(`Possible embedded secret: ${relative(root, file)}`);
+  if (/fetch\(['"]https?:\/\//.test(text) || /https?:\/\/(?:api\.)?(?:stripe|roller|yellowdog|splash)/i.test(text)) throw new Error(`Vendor network boundary violated: ${relative(root, file)}`);
+}
+console.log(`PASS check: ${files.filter((path) => ['.js', '.mjs'].includes(extname(path))).length} JS files parsed; zero dependencies; HTTP confined to server/test; external network imports, vendor calls, embedded secrets, and fixture PII absent`);

@@ -4,67 +4,78 @@ import { readFile } from 'node:fs/promises';
 
 const script = await readFile(new URL('../public/app.js', import.meta.url), 'utf8');
 const page = await readFile(new URL('../public/index.html', import.meta.url), 'utf8');
+const styles = await readFile(new URL('../public/styles.css', import.meta.url), 'utf8');
 
-test('client preserves structured error responses for expected conflict states', () => {
+test('client preserves structured errors and duplicate admission states', () => {
   assert.match(script, /error\.data=data/);
-  assert.match(script, /error\.data\?\.result&&error\.data\?\.state/);
-  assert.match(script, /Check-in result:/);
+  assert.match(script, /error\.data\?\.state/);
+  assert.match(script, /duplicate or denied admission/);
 });
 
-test('client recovers active holds after refresh and keeps confirmation available', () => {
-  assert.match(script, /find\(hold=>hold\.status==='ACTIVE'\)/);
-  assert.match(script, /confirm-order'\)\.disabled=!activeHold/);
+test('client recovers active holds and prevents duplicate mutations', () => {
+  assert.match(script, /find\(\(h\)=>h\.status==='ACTIVE'\)/);
+  assert.match(script, /confirm-order'\)\.disabled=!activeHold\|\|pending/);
+  assert.match(script, /if\(!activeHold\|\|pending\)return/);
+  assert.match(script, /busy\(button,true,'Creating hold…'\)/);
 });
 
-test('login transitions move focus to visible headings and clear stale status', () => {
-  assert.match(page, /<link rel="icon" href="data:,">/);
+test('focusable headings and login validation support keyboard use', () => {
   assert.match(page, /id="login-title" tabindex="-1"/);
-  assert.match(page, /id="capacity-title" tabindex="-1"/);
-  assert.match(script, /focusConsole:true/);
-  assert.match(script, /focusLogin:true/);
-  assert.match(script, /\/api\/auth\/status/);
+  assert.match(page, /id="today-title" tabindex="-1"/);
+  assert.match(script, /if\(focus\)\{\$\('#login-status'\)\.textContent='';[^}]*\$\('#login-title'\)\.focus\(\)/);
+  assert.match(script, /if\(focus\).*\.focus\(\)/);
+  assert.match(script, /field\.checkValidity\(\)/);
+  assert.match(page, /minlength="16"/);
 });
 
-test('client escapes every server-provided value before dynamic markup rendering', () => {
-  assert.match(script, /const escapeHtml=/);
-  assert.match(script, /escapeHtml\(product\.name\)/);
-  assert.match(script, /escapeHtml\(report\.title\)/);
-  assert.match(script, /escapeHtml\(item\.name\)/);
-  assert.match(script, /escapeHtml\(ticket\.displayCode\)/);
+test('order rows use the domain status field', () => {
+  assert.match(script, /\['State','status'/);
+  assert.doesNotMatch(script, /\['State','state'/);
 });
 
-test('mutation controls lock while requests are pending to prevent duplicate actions', () => {
-  assert.match(script, /let state=null,csrf='',activeHold=null,mutationPending=false/);
-  assert.match(script, /if\(!activeHold\|\|mutationPending\)return/);
-  assert.match(script, /setBusy\(button,true,'Creating hold…'\)/);
-  assert.match(script, /setBusy\(button,true,'Recording…'\)/);
+test('dynamic markup uses a single HTML escaping boundary', () => {
+  assert.match(script, /const esc=/);
+  assert.match(script, /esc\(p\.name\)/);
+  assert.match(script, /esc\(report\.title\)/);
+  assert.match(script, /esc\(ticket\.displayCode\)/);
+  assert.match(script, /esc\(connector\.description\)/);
 });
 
-test('all operator views are keyboard-addressable and mobile navigation mirrors routes', () => {
-  for (const id of ['capacity','sales','tickets','reports','operations']) {
+test('all required operator surfaces and mobile parity are present', () => {
+  for (const id of ['today','schedule','sell','orders','admissions','customers','memberships','giftcards','catalog','inventory','staff','imports','reports','integrations','settings']) {
     assert.match(page, new RegExp(`id="${id}"`));
     assert.match(page, new RegExp(`data-nav="${id}"`));
   }
-  assert.match(page, /id="mobile-nav"/);
-  assert.match(script, /setAttribute\('aria-current','page'\)/);
-  assert.match(script, /showView\(event\.target\.value,\{focus:true\}\)/);
+  for (const item of ['Today','Sell','Scan','More']) assert.match(page, new RegExp(`>${item}<`));
+  assert.match(script, /toggleAttribute\('aria-current'/);
 });
 
-test('hidden authentication and application shells leave the keyboard order', async () => {
-  const styles = await readFile(new URL('../public/styles.css', import.meta.url), 'utf8');
+test('responsive, reduced-motion, forced-color, and hidden-state rules exist', () => {
   assert.match(styles, /\[hidden\]\{display:none!important\}/);
+  assert.match(styles, /@media\(max-width:1200px\)/);
+  assert.match(styles, /@media\(max-width:768px\)/);
+  assert.match(styles, /table thead\{position:absolute;width:1px;height:1px;[^}]*overflow:hidden/);
+  assert.match(styles, /prefers-reduced-motion:reduce/);
+  assert.match(styles, /forced-colors:active/);
 });
 
-test('short passcodes are rejected before a network authentication attempt', () => {
-  assert.match(script, /!field\.value\|\|field\.value\.length<16\|\|!field\.checkValidity\(\)/);
-  assert.match(script, /Enter a passcode of at least 16 characters/);
+test('strict style CSP has no inline style attributes to block', () => {
+  assert.doesNotMatch(page, /\sstyle=/);
+  assert.match(styles, /\.bars i:nth-child\(6\)\{height:30%\}/);
 });
 
-test('persistent safety boundaries and inert report links remain visible', () => {
+test('import center parses local files and only creates dry-run jobs', () => {
+  assert.match(page, /type="file"/);
+  assert.match(script, /await file\.text\(\)/);
+  assert.match(script, /\/api\/imports\/preview/);
+  assert.match(script, /dryRun:true/);
+});
+
+test('safety and durability boundaries remain persistent', () => {
   assert.match(page, /NON-PRODUCTION · SYNTHETIC DATA ONLY/);
-  assert.match(page, /Ephemeral session/);
-  assert.match(page, /No payment collected/);
-  assert.match(page, /No report was downloaded during verification/);
-  assert.match(script, /download>CSV report/);
-  assert.match(script, /download>JSON report/);
+  assert.match(page, /PER-INSTANCE/);
+  assert.match(page, /Not production-durable/);
+  assert.match(page, /No real people, payments, provider calls/);
+  assert.doesNotMatch(page, /download=/);
+  assert.match(page, /No download initiated/);
 });

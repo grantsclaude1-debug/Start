@@ -1,134 +1,35 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="color-scheme" content="light">
-  <meta name="theme-color" content="#123d35">
-  <link rel="icon" href="data:,">
-  <title>Dig n Zone Operator Preview — Non-Production</title>
-  <link rel="stylesheet" href="/styles.css">
-  <script src="/app.js" defer></script>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><meta name="theme-color" content="#123d35">
+  <link rel="icon" href="data:,"><title>Dig n Zone Operator Console — Synthetic</title><link rel="stylesheet" href="/styles.css"><script src="/app.js" defer></script>
 </head>
 <body>
-  <a class="skip-link" href="#main-content">Skip to main content</a>
-  <div class="warning" role="alert">
-    <strong>NON-PRODUCTION · SYNTHETIC DATA ONLY</strong>
-    <span>PER-INSTANCE EPHEMERAL PREVIEW. No real sales, check-in, payments, customer data, scanning, or provider actions.</span>
-  </div>
-
-  <main id="main-content">
-    <section id="login" class="login-shell" aria-labelledby="login-title">
-      <div class="login-brand" aria-hidden="true">
-        <div class="brand-mark">DZ</div>
-        <p class="eyebrow light">PRIVATE OPERATOR PREVIEW</p>
-        <h1>Run the day with clarity.</h1>
-        <p>A focused synthetic workspace for capacity, sample sales, admissions, reports, and operating readiness.</p>
-        <ul class="boundary-list">
-          <li>Ephemeral in-memory state</li>
-          <li>Payments and providers disabled</li>
-          <li>No real guest information</li>
-        </ul>
-      </div>
-      <div class="login-panel">
-        <span class="pill pill-warning">Restricted preview</span>
-        <h2 id="login-title" tabindex="-1">Sign in to the operator console</h2>
-        <p class="lede">Use the temporary private-build passcode. Verification happens on the server and the passcode is never stored in this page.</p>
-        <form id="login-form" novalidate>
-          <label for="passcode">Private demo passcode</label>
-          <div class="input-wrap"><input id="passcode" name="passcode" type="password" autocomplete="current-password" minlength="16" required aria-describedby="passcode-help login-status"></div>
-          <p id="passcode-help" class="field-help">At least 16 characters. Failed attempts are rate-limited and fail closed.</p>
-          <button id="login-submit" class="button button-primary" type="submit"><span>Open synthetic console</span></button>
-        </form>
-        <p id="login-status" class="status" role="status" aria-live="polite"></p>
-        <div class="boundary-note"><strong>Preview boundary</strong><span>State disappears whenever this instance restarts, is replaced, or scales.</span></div>
-      </div>
-    </section>
-
-    <div id="console" class="app-shell" hidden>
-      <aside class="sidebar" aria-label="Operator navigation">
-        <div class="brand-lockup"><div class="brand-mark small">DZ</div><div><strong>Dig n Zone</strong><span>Operator preview</span></div></div>
-        <nav aria-label="Console sections">
-          <p class="nav-label">OPERATIONS</p>
-          <a href="#capacity" data-nav="capacity"><span aria-hidden="true">◫</span> Overview</a>
-          <a href="#sales" data-nav="sales"><span aria-hidden="true">＋</span> Sample sale</a>
-          <a href="#tickets" data-nav="tickets"><span aria-hidden="true">◇</span> Admissions</a>
-          <p class="nav-label">INSIGHTS & SYSTEMS</p>
-          <a href="#reports" data-nav="reports"><span aria-hidden="true">▥</span> Reports</a>
-          <a href="#operations" data-nav="operations"><span aria-hidden="true">◎</span> Readiness</a>
-        </nav>
-        <div class="sidebar-boundary"><span class="status-dot"></span><div><strong>Synthetic mode</strong><small>No live actions</small></div></div>
-      </aside>
-
-      <div class="workspace">
-        <header class="topbar">
-          <div><p class="eyebrow">VENUE OPERATIONS</p><h1 id="page-title">Today’s overview</h1></div>
-          <div class="topbar-actions">
-            <span class="pill pill-neutral">One venue</span>
-            <button id="logout" class="button button-secondary" type="button">Sign out</button>
-          </div>
-        </header>
-
-        <div class="mobile-nav-wrap"><label for="mobile-nav">Current workspace</label><select id="mobile-nav"><option value="capacity">Overview</option><option value="sales">Sample sale</option><option value="tickets">Admissions</option><option value="reports">Reports</option><option value="operations">Readiness</option></select></div>
-
-        <div class="ephemeral-strip" role="note"><strong>Ephemeral session</strong><span>All activity is synthetic, instance-local, and cleared by a restart.</span></div>
-        <div id="loading-state" class="loading-panel" role="status" aria-live="polite" hidden><span class="spinner" aria-hidden="true"></span>Loading synthetic venue state…</div>
-
-        <section id="capacity" class="view" data-title="Today’s overview" aria-labelledby="capacity-title">
-          <div class="hero">
-            <div><p class="eyebrow light">SATURDAY · SYNTHETIC SESSION</p><h2 id="capacity-title" tabindex="-1">A clear view of today’s floor</h2><p>Track availability and active holds before starting the next sample transaction.</p></div>
-            <div class="hero-meta"><span>No live actions</span><strong>10:00 AM</strong><small>Synthetic session</small></div>
-          </div>
-          <div class="section-heading"><div><p class="eyebrow">LIVE SNAPSHOT</p><h3>Session availability</h3><p>Capacity is server-authoritative and updates after every synthetic action.</p></div><button id="refresh" class="button button-secondary" type="button">Refresh snapshot</button></div>
-          <div id="metrics" class="metrics" aria-live="polite"></div>
-          <article class="panel">
-            <div class="panel-heading"><div><h3>Reservation holds</h3><p>Server-validated reservations with ten-minute expiry.</p></div><span class="pill pill-safe">Oversell protection on</span></div>
-            <div id="holds" class="table-wrap"></div>
-          </article>
-        </section>
-
-        <section id="sales" class="view" data-title="Create a sample sale" aria-labelledby="sales-title" hidden>
-          <div class="page-intro"><div><p class="eyebrow">SYNTHETIC TRANSACTION</p><h2 id="sales-title" tabindex="-1">Create a sample sale</h2><p>Reserve capacity, review the disabled-payment boundary, then issue a local synthetic ticket.</p></div><span class="pill pill-warning">No payment collected</span></div>
-          <ol class="stepper" aria-label="Sample sale steps"><li class="active"><span>1</span>Reserve</li><li><span>2</span>Confirm</li><li><span>3</span>Admit</li></ol>
-          <div class="two-col">
-            <form id="hold-form" class="panel" novalidate>
-              <div class="panel-heading"><div><p class="step-kicker">STEP 1</p><h3>Reserve admission</h3></div><span class="pill pill-neutral">10-minute hold</span></div>
-              <label for="product">Admission product</label><select id="product" name="product" required></select>
-              <label for="quantity">Guest quantity</label><input id="quantity" name="quantity" type="number" inputmode="numeric" min="1" max="10" value="1" required aria-describedby="quantity-help">
-              <p id="quantity-help" class="field-help">Choose 1–10 synthetic admissions, subject to available capacity.</p>
-              <button id="hold-submit" class="button button-primary" type="submit">Create capacity hold</button>
-            </form>
-            <article class="panel payment-boundary">
-              <div class="panel-heading"><div><p class="step-kicker">STEP 2</p><h3>Confirm sample order</h3></div><span class="pill pill-off">Payment disabled</span></div>
-              <p>Confirmation creates only an in-memory synthetic order and display-only ticket. It cannot contact a processor.</p>
-              <dl class="boundary-grid"><div><dt>Provider</dt><dd>Disabled placeholder</dd></div><div><dt>Card entry</dt><dd>Unavailable</dd></div><div><dt>Capture / refund</dt><dd>Unavailable</dd></div></dl>
-              <button id="confirm-order" class="button button-primary" type="button" disabled>Confirm without payment</button>
-              <p class="field-help">Create an active hold before confirmation becomes available.</p>
-            </article>
-          </div>
-          <p id="action-status" class="status" role="status" aria-live="polite"></p>
-        </section>
-
-        <section id="tickets" class="view" data-title="Admissions" aria-labelledby="tickets-title" hidden>
-          <div class="page-intro"><div><p class="eyebrow">ENTRY CONTROL</p><h2 id="tickets-title" tabindex="-1">Admissions</h2><p>Review issued synthetic tickets and exercise server-validated check-in.</p></div><span class="pill pill-warning">Display code only</span></div>
-          <div class="callout" role="note"><strong>Not a QR code</strong><span>Every pattern shown here is deliberately decorative and incompatible with scanners.</span></div>
-          <div id="ticket-list" class="cards"></div>
-          <article id="admissions" class="panel"></article>
-        </section>
-
-        <section id="reports" class="view" data-title="Reports" aria-labelledby="reports-title" hidden>
-          <div class="page-intro"><div><p class="eyebrow">PLAIN-LANGUAGE INSIGHTS</p><h2 id="reports-title" tabindex="-1">Understand the synthetic day</h2><p>Simple reports explain what happened without hiding the preview boundary.</p></div><span class="pill pill-neutral">Synthetic rows only</span></div>
-          <div class="callout muted" role="note"><strong>Report links remain available</strong><span>Exports require an authenticated click and contain synthetic data only. No report was downloaded during verification.</span></div>
-          <div id="report-list" class="cards report-grid"></div>
-        </section>
-
-        <section id="operations" class="view" data-title="System readiness" aria-labelledby="operations-title" hidden>
-          <div class="page-intro"><div><p class="eyebrow">READINESS & BOUNDARIES</p><h2 id="operations-title" tabindex="-1">System readiness</h2><p>See exactly what is local, read-only, manual, or disabled.</p></div><span class="pill pill-safe">Boundaries enforced</span></div>
-          <div id="operations-list" class="cards operations-grid"></div>
-        </section>
-      </div>
-    </div>
-  </main>
-  <footer><strong>NON-PRODUCTION / SYNTHETIC</strong><span>Per-instance ephemeral memory · Unsuitable for real sales, capacity, tickets, or check-in · No PII · No provider writes</span></footer>
-</body>
-</html>
+<a class="skip-link" href="#main-content">Skip to main content</a>
+<div class="safety-banner" role="alert"><strong>NON-PRODUCTION · SYNTHETIC DATA ONLY</strong><span>PER-INSTANCE EPHEMERAL process-local state. No real people, payments, provider calls, or production operations.</span></div>
+<main id="main-content">
+<section id="login" class="login-shell" aria-labelledby="login-title"><div class="login-brand"><div class="brand-mark">DZ</div><p class="eyebrow">PRIVATE OPERATOR BUILD</p><h1>Venue work, without the guesswork.</h1><p>This protected local console contains synthetic fixtures only. It is not production-durable.</p><ul><li>No customer or staff PII</li><li>No live vendor connections</li><li>No payment collection</li></ul></div><div class="login-panel"><span class="badge warning">Temporary shared gate</span><h2 id="login-title" tabindex="-1">Open operator console</h2><p>The server verifies a temporary 16+ character passcode. This is not production authentication.</p><form id="login-form" novalidate><label for="passcode">Temporary passcode</label><input id="passcode" type="password" minlength="16" autocomplete="current-password" required aria-describedby="passcode-help login-status"><small id="passcode-help">Failed attempts are rate-limited and fail closed.</small><button id="login-submit" class="primary" type="submit">Open console</button></form><p id="login-status" class="status" role="status" aria-live="polite"></p></div></section>
+<div id="console" class="app-shell" hidden>
+<aside class="rail"><div class="brand-lockup"><div class="brand-mark small">DZ</div><div><strong>Dig n Zone</strong><span>Operator console</span></div></div><nav aria-label="Primary"><p>VENUE</p><a href="#today" data-nav="today">Today</a><a href="#schedule" data-nav="schedule">Calendar & capacity</a><a href="#sell" data-nav="sell">Sell</a><a href="#orders" data-nav="orders">Orders</a><a href="#admissions" data-nav="admissions">Admissions</a><p>GUEST PROGRAMS</p><a href="#customers" data-nav="customers">Customers & waivers</a><a href="#memberships" data-nav="memberships">Memberships & passes</a><a href="#giftcards" data-nav="giftcards">Gift cards</a><p>OPERATIONS</p><a href="#catalog" data-nav="catalog">Products & experiences</a><a href="#inventory" data-nav="inventory">Inventory mirror</a><a href="#staff" data-nav="staff">Staff & tasks</a><a href="#imports" data-nav="imports">Import Center</a><a href="#reports" data-nav="reports">Reporting</a><a href="#integrations" data-nav="integrations">Integrations</a><a href="#settings" data-nav="settings">Settings</a></nav><div class="mode"><i></i><span><strong>Local synthetic mode</strong><small>No provider traffic</small></span></div></aside>
+<div class="workspace"><header class="topbar"><button id="menu-toggle" class="icon-button" type="button" aria-label="Toggle navigation" aria-expanded="false">☰</button><div><p class="eyebrow" id="clock">LOCAL TIME</p><h1 id="page-title">Today</h1></div><div class="topbar-actions"><span class="freshness">Fresh · local</span><span class="badge good">Systems local</span><button id="refresh" type="button">Refresh</button><button id="logout" type="button">Sign out</button></div></header>
+<div class="durability" role="note"><strong>Not production-durable.</strong> Memory is isolated per process and disappears on restart. Shared storage, transactional coordination, RBAC/MFA, monitoring, and real integrations remain blocked.</div>
+<div id="loading-state" class="loading" role="status" hidden><span></span>Loading local venue state…</div>
+<section id="today" class="view" aria-labelledby="today-title"><div class="page-head"><div><p class="eyebrow">OPERATIONS HOME</p><h2 id="today-title" tabindex="-1">Today at Dig n Zone</h2><p>Cross-workflow summary of synthetic venue activity and attention items.</p></div><span class="badge warning">Synthetic service day</span></div><div id="summary-metrics" class="metrics"></div><div class="grid two"><article class="panel"><div class="panel-head"><div><h3>Session capacity</h3><p>Confirmed + held + blocked never exceeds total.</p></div><a href="#schedule" data-route="schedule">Open schedule</a></div><div id="today-sessions" class="table-wrap"></div></article><article class="panel"><h3>Attention queue</h3><ul class="attention"><li><span class="badge warning">1 open</span> Opening readiness walk in progress</li><li><span class="badge neutral">Local</span> Connector simulations have no vendor access</li><li><span class="badge good">Valid</span> Gift-card hash chain verified</li></ul></article></div><div class="grid two"><article class="panel"><h3>Arrivals trend</h3><div class="bars" aria-label="Synthetic arrivals trend"><i></i><i></i><i></i><i></i><i></i><i></i></div></article><article class="panel"><h3>Recent activity</h3><div id="activity" class="timeline"></div></article></div></section>
+<section id="schedule" class="view" hidden><div class="page-head"><div><p class="eyebrow">CALENDAR & CAPACITY</p><h2 tabindex="-1">Schedule</h2><p>Session-level availability with explicit capacity blocks.</p></div><button data-route="sell" class="primary">Create booking</button></div><div class="filterbar"><label>Date <input type="date" value="2030-06-01"></label><label>View <select><option>Run sheet</option><option>Calendar</option></select></label></div><article class="panel"><div id="schedule-table" class="table-wrap"></div></article></section>
+<section id="sell" class="view" hidden><div class="page-head"><div><p class="eyebrow">GUIDED CHECKOUT</p><h2 tabindex="-1">Sell admission</h2><p>Reserve capacity, review, then confirm a local order stored without payment.</p></div><span class="badge blocked">Payment disabled</span></div><ol class="steps"><li class="active">1 Select</li><li>2 Review</li><li>3 Confirm</li></ol><div class="checkout"><form id="hold-form" class="panel" novalidate><h3>Select experience</h3><label for="product">Product</label><select id="product" required></select><label for="quantity">Quantity</label><input id="quantity" type="number" min="1" max="10" value="1" required><small>1–10 synthetic admissions, subject to capacity.</small><button id="hold-submit" class="primary" type="submit">Create 10-minute hold</button></form><aside class="panel sticky"><h3>Order summary</h3><p id="hold-summary">No active hold.</p><dl><div><dt>Payment state</dt><dd>Stored for authorization — not paid</dd></div><div><dt>Provider</dt><dd>Disabled local fake</dd></div></dl><button id="confirm-order" class="primary" type="button" disabled>Confirm local order</button></aside></div><p id="action-status" class="status" role="status" aria-live="polite"></p></section>
+<section id="orders" class="view" hidden><div class="page-head"><div><p class="eyebrow">ORDERS & BOOKINGS</p><h2 tabindex="-1">Orders</h2><p>Local synthetic orders and booking detail.</p></div><span class="badge neutral">No refunds or captures</span></div><div class="filterbar"><label>Search <input id="order-search" type="search" placeholder="Order reference"></label><label>Status <select><option>All states</option><option>Confirmed</option></select></label></div><article class="panel"><div id="orders-table" class="table-wrap"></div></article></section>
+<section id="admissions" class="view" hidden><div class="page-head"><div><p class="eyebrow">ENTRY CONTROL</p><h2 tabindex="-1">Admissions</h2><p>Use a signed local ticket token through server validation; display codes are not scanner-compatible.</p></div><span class="badge warning">Camera disabled</span></div><div class="scan-lane panel"><label for="ticket-lookup">Manual ticket lookup</label><div><input id="ticket-lookup" placeholder="Synthetic display code"><button id="lookup-ticket" type="button">Lookup</button></div><p id="scan-result" class="scan-result" role="status">Ready for a synthetic ticket.</p></div><div id="ticket-list" class="cards"></div><article class="panel"><h3>Check-in attempts</h3><div id="admissions-table" class="table-wrap"></div></article></section>
+<section id="customers" class="view" hidden><div class="page-head"><div><p class="eyebrow">CUSTOMERS & WAIVERS</p><h2 tabindex="-1">Customer references</h2><p>No names, email, phone, address, birth date, signature, or other PII is accepted or shown.</p></div><span class="badge blocked">Waiver placeholder only</span></div><article class="panel"><div id="customers-table" class="table-wrap"></div></article></section>
+<section id="memberships" class="view" hidden><div class="page-head"><div><p class="eyebrow">MEMBERSHIPS & PASSES</p><h2 tabindex="-1">Entitlements</h2><p>Synthetic entitlement status with renewal and billing disabled.</p></div><span class="badge blocked">Billing disabled</span></div><article class="panel"><div id="memberships-table" class="table-wrap"></div></article></section>
+<section id="giftcards" class="view" hidden><div class="page-head"><div><p class="eyebrow">STORED VALUE</p><h2 tabindex="-1">Gift-card liability ledger</h2><p>Every balance change appends an immutable hash-linked entry. Entries cannot be edited or deleted.</p></div><span id="ledger-badge" class="badge good">Chain valid</span></div><div class="grid two"><form id="gift-form" class="panel"><h3>Append synthetic adjustment</h3><label>Card reference <input id="gift-card-id" value="GC-SYN-1001" readonly></label><label>Entry type <select id="gift-type"><option value="REDEEMED">Redeemed</option><option value="ADJUSTED">Adjusted</option></select></label><label>Amount in cents <input id="gift-amount" type="number" value="-500" step="1" required></label><label>Reason <input id="gift-reason" value="Synthetic operator adjustment" required></label><button class="primary" type="submit">Append ledger entry</button></form><article class="panel"><h3>Current liability</h3><div id="gift-summary" class="big-number"></div><p>Money values use integer minor units only.</p></article></div><article class="panel"><div id="gift-ledger" class="table-wrap"></div></article></section>
+<section id="catalog" class="view" hidden><div class="page-head"><div><p class="eyebrow">PRODUCTS & EXPERIENCES</p><h2 tabindex="-1">Catalog</h2><p>Local synthetic prices and admission types.</p></div><span class="badge neutral">USD minor units</span></div><article class="panel"><div id="catalog-table" class="table-wrap"></div></article></section>
+<section id="inventory" class="view" hidden><div class="page-head"><div><p class="eyebrow">INVENTORY MIRROR</p><h2 tabindex="-1">Yellow Dog mirror</h2><p>Read-only local facts. Counts, transfers, waste, and sales delivery are disabled.</p></div><span class="badge good">Read only</span></div><article class="panel"><div id="inventory-table" class="table-wrap"></div></article></section>
+<section id="staff" class="view" hidden><div class="page-head"><div><p class="eyebrow">STAFF & TASKS</p><h2 tabindex="-1">Coverage and work</h2><p>Role-only synthetic fixtures contain no employee names or contact details.</p></div><span class="badge neutral">No staff PII</span></div><div class="grid two"><article class="panel"><h3>Coverage</h3><div id="staff-table" class="table-wrap"></div></article><article class="panel"><h3>Tasks</h3><div id="tasks-table" class="table-wrap"></div></article></div></section>
+<section id="imports" class="view" hidden><div class="page-head"><div><p class="eyebrow">IMPORT CENTER</p><h2 tabindex="-1">Validate local files</h2><p>Files are parsed in this browser, then sent only to the loopback/local server for deterministic preview. Nothing is uploaded to a vendor.</p></div><span class="badge good">Local only</span></div><div class="grid two"><form id="import-form" class="panel"><h3>1. Choose and map</h3><label for="import-file">Local CSV or JSON file</label><input id="import-file" type="file" accept=".csv,.json,text/csv,application/json" required><label>Entity <select id="import-entity"><option value="products">Products</option><option value="customers">Customers</option><option value="memberships">Memberships</option><option value="inventory">Inventory</option></select></label><fieldset><legend>Field mapping</legend><label>Source ID column <input id="map-source" value="sourceId"></label><label>Name/reference column <input id="map-name" value="name"></label></fieldset><button id="preview-import" class="primary" type="submit">Validate and preview</button></form><article class="panel"><h3>2. Preview</h3><div id="import-preview" class="empty">Choose a small synthetic file to see validation results.</div><button id="run-import" type="button" disabled>Create dry-run job</button></article></div><article class="panel"><h3>Import history</h3><div id="import-history" class="table-wrap"></div></article></section>
+<section id="reports" class="view" hidden><div class="page-head"><div><p class="eyebrow">REPORTING</p><h2 tabindex="-1">Report workspace</h2><p>Create deterministic local export jobs without downloading a file.</p></div><span class="badge neutral">No download initiated</span></div><div id="report-list" class="cards"></div><article class="panel"><h3>Export jobs</h3><div id="export-jobs" class="table-wrap"></div></article></section>
+<section id="integrations" class="view" hidden><div class="page-head"><div><p class="eyebrow">SETTINGS / INTEGRATIONS</p><h2 tabindex="-1">Connector boundaries</h2><p>All checks are deterministic local simulations. Provider call count must remain zero.</p></div><span class="badge good">Network isolated by design</span></div><div id="connector-list" class="cards"></div><article class="panel"><h3>Simulation history</h3><div id="connector-events" class="table-wrap"></div></article></section>
+<section id="settings" class="view" hidden><div class="page-head"><div><p class="eyebrow">SETTINGS</p><h2 tabindex="-1">Venue configuration</h2><p>Review boundaries; persistent account and provider configuration is intentionally unavailable.</p></div><span class="badge warning">Private build</span></div><div class="grid two"><article class="panel"><h3>Authentication</h3><p>Temporary shared passcode gate. Not RBAC, SSO, passkeys, or MFA.</p><button type="button" disabled>Manage identities unavailable</button></article><article class="panel"><h3>Data durability</h3><p>Process memory only. No database, backup, multi-instance coordination, or disaster recovery.</p><button type="button" disabled>Storage setup unavailable</button></article></div></section>
+</div><nav class="mobile-nav" aria-label="Mobile"><a href="#today" data-nav="today">Today</a><a href="#sell" data-nav="sell">Sell</a><a href="#admissions" data-nav="admissions">Scan</a><button id="more-nav" type="button">More</button></nav></div>
+</main>
+<footer><strong>NON-PRODUCTION / SYNTHETIC</strong><span>No PII · No provider traffic · No payment · Ephemeral process-local state · Unsuitable for real sales, capacity, tickets, or check-in</span></footer>
+</body></html>
