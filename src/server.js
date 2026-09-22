@@ -330,6 +330,14 @@ export function createDemoRequestHandler({ env = process.env, now = () => Date.n
         state.events.append({ type: 'TICKET_ISSUED', aggregateType: 'Ticket', aggregateId: ticketId, payload: { orderId: order.id, maxEntries: hold.quantity } });
         return send(res, 201, { order: state.orders.at(-1), ticket: publicTicket, payment, state: snapshot(state, context.csrf) });
       }
+      if (url.pathname === '/api/tickets/lookup' && req.method === 'POST') {
+        const body = await readJson(req);
+        const claims = state.tokens.verify(body.token, { venueId: 'venue-demo', at: now() });
+        const ticket = state.tickets.find((item) => item.id === claims.ticket_id);
+        if (!ticket) throw new DomainError('NOT_FOUND');
+        const { token: _token, ...publicTicket } = ticket;
+        return send(res, 200, { ticket: publicTicket, verification: 'SIGNED_TOKEN_VERIFIED', providerCalls: 0 });
+      }
       if (url.pathname === '/api/checkins' && req.method === 'POST') {
         const body = await readJson(req); const ticket = state.tickets.find((item) => item.id === body.ticketId);
         if (!ticket) throw new DomainError('NOT_FOUND');

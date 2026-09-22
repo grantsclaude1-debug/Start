@@ -21,7 +21,7 @@ This evidence covers the binding requirements in [Implementation acceptance — 
 - Resource reads for products, sessions, capacity blocks, holds, orders, tickets, check-ins, exceptions, reports, export jobs, audit, connectors, and integration detail.
 - Controlled clock and deterministic job runner for expiry/progression/retry work.
 - Deterministic fake payment provider with stored, authorized, paid, and denied fixtures; no raw-card handling and zero provider calls.
-- Real local Ed25519 ticket tokens and server-side admission registry.
+- Real local Ed25519 ticket tokens and server-side admission registry. Manual lookup posts a signed token to `/api/tickets/lookup`; arbitrary display codes are rejected and are never treated as validation input.
 - Hash-linked append-only domain event projection and immutable exception cases.
 - Atomic checkout service rolls back hold, order, ticket, admission, outbox, and audit state at every injected boundary.
 - Export lifecycle `QUEUED → RUNNING → RENDERED | FAILED → EXPIRED`, always non-downloadable in the UI lifecycle.
@@ -56,7 +56,7 @@ This evidence covers the binding requirements in [Implementation acceptance — 
 - gate authentication and anonymous/authenticated API boundaries;
 - malformed JSON, wrong content type, oversized body, import abuse, provenance collision, dry-run zero mutation, atomic commit, reconciliation, and deterministic history;
 - formula neutralization;
-- duplicate check-ins;
+- signed-token manual lookup success, arbitrary display-code rejection, and duplicate check-ins;
 - export lifecycle without download;
 - connector retry/mapping/token/rate/partial/gap/conflict states without provider calls;
 - secret scanning and response security headers;
@@ -72,6 +72,7 @@ The exact machine-readable result is [rendered-verification-2026-09-21.json](ren
 - Exercised all ten Import Center templates in the rendered selector; CSV, JSON, and NDJSON detection; explicit `IGNORE`, transforms, canonical preview, row errors, dry run, synthetic commit, reconciliation, deterministic history, idempotency, formula neutralization, PII rejection, and provenance/hash collision handling.
 - Exercised product, session, and capacity-block mutation success, duplicate idempotency, stale-version conflicts, and capacity over-block rejection.
 - Rendered and verified explicit loading, empty, error, stale, and access-denied states after the final layout change.
+- The independent parent audit found and corrected the remaining browser-only display-code lookup: the rendered admissions field now accepts signed tokens only, and focused API/UI regressions prove server-side verification and display-code rejection. The corrected Admissions route was then rendered again at 320, 375, 768, 1024, 1440, and 1920 px with visible/focused controls, no horizontal overflow, explicit arbitrary-code denial, zero runtime exceptions, zero external requests, and zero downloads.
 - Final JavaScript/runtime console errors: 0. Seven expected browser network-log entries corresponded exactly to the deliberately exercised 400/409 failure paths. External/provider requests: 0. Downloads: 0. Observed requests: 62, all loopback same-origin or inline `data:` UI resources.
 
 ## Remaining production blockers

@@ -14,6 +14,13 @@ test('client has no alert calls and exposes inline live feedback', () => {
   for (const id of ['import-status','finance-status','catalog-status','session-status','block-status','report-status']) assert.match(page, new RegExp(`id="${id}"[^>]*role="status"`));
 });
 
+test('manual admissions lookup verifies a signed token on the server and never matches display IDs in browser state', () => {
+  assert.match(page, /Signed ticket token lookup/);
+  assert.match(app, /\/api\/tickets\/lookup/);
+  assert.doesNotMatch(app, /state\.tickets\.find\(\(item\)=>item\.displayCode/);
+  assert.match(server, /state\.tokens\.verify\(body\.token/);
+});
+
 test('Import Center UI offers all ten templates, NDJSON, explicit ignore, constants, transforms, canonical validation, jobs, and reconciliation', () => {
   for (const value of ['products','sessions','orders','tickets','customers','memberships','giftCards','inventoryReferences','waivers','checkIns']) assert.match(page, new RegExp(`option value="${value}"`));
   assert.match(page, /\.ndjson/); assert.match(app, /'ndjson'/); assert.match(app, /'IGNORE'/); assert.match(app, /constants/); assert.match(app, /TRIM/); assert.match(app, /\/api\/import\/uploads/); assert.match(app, /\/detect/); assert.match(app, /\/validate/); assert.match(app, /\/preview\?mappingId/); assert.match(app, /\/errors\?mappingId/); assert.match(app, /mode,'?synthetic/); assert.match(app, /DRY_RUN/); assert.match(app, /COMMIT/); assert.match(app, /reconciliation/); assert.match(page, /Provenance/); assert.match(page, /Source version/); assert.match(page, /File hash|hash/);

@@ -127,6 +127,15 @@ test('API enforces JSON type, body limit, same-origin CSRF, atomic holds, orders
   assert.equal('token' in order.data.ticket, false);
   assert.equal(order.data.state.capacity.confirmed, 10);
 
+  const issuedToken = server.demoState.tickets.find((ticket) => ticket.id === order.data.ticket.id).token;
+  const verifiedLookup = await request('/api/tickets/lookup', { method: 'POST', body: { token: issuedToken }, headers: common });
+  assert.equal(verifiedLookup.status, 200);
+  assert.equal(verifiedLookup.data.verification, 'SIGNED_TOKEN_VERIFIED');
+  assert.equal(verifiedLookup.data.ticket.id, order.data.ticket.id);
+  assert.equal('token' in verifiedLookup.data.ticket, false);
+  const displayCodeLookup = await request('/api/tickets/lookup', { method: 'POST', body: { token: order.data.ticket.displayCode }, headers: common });
+  assert.equal(displayCodeLookup.status, 400);
+
   const missingKey = await request('/api/checkins', { method: 'POST', body: { ticketId: order.data.ticket.id }, headers: common });
   assert.equal(missingKey.status, 400);
   const accepted = await request('/api/checkins', { method: 'POST', body: { ticketId: order.data.ticket.id }, headers: { ...common, 'idempotency-key': 'scan-1' } });
