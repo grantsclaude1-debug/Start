@@ -46,7 +46,7 @@ This evidence covers the binding requirements in [Implementation acceptance — 
 
 ## Automated verification
 
-`npm run verify` passes after implementation. The suite covers:
+`npm run verify` passes after implementation: 48 JavaScript files parsed, documentation and Vercel checks passed, and 80/80 tests passed. The suite covers:
 
 - capacity floor, final-unit contention, and expiry/consume races;
 - idempotency mismatch behavior;
